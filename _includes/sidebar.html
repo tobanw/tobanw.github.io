@@ -1,12 +1,13 @@
 <nav>
   <a href="/">
     {% if site.data.theme.social.gravatar %}
-    <img src="http://www.gravatar.com/avatar/{{ site.data.theme.social.gravatar }}?s=200" id="gravatar" alt="My photo"/>
+	<img src="http://www.gravatar.com/avatar/{{ site.data.theme.social.gravatar }}?s=200" id="gravatar" alt="{{{site.data.theme.name}}}"/>
     {% else %}
-    <img src="/logo.png" id="logo" width="200" alt="Penn Effective Altruism"/>
+    <img src="/logo.png" id="logo" width="200"/>
     {% endif %}
   </a>
   <h2><a href="/">{{ site.data.theme.title }}</a></h2>
+  <h3 style="text-align:center">{{site.data.theme.name}}</h6>
   <h6 style="text-align:center">{{site.data.theme.tagline}}</h6>
 
   <div id="sidebar-module">
@@ -15,14 +16,6 @@
 
   <div id="sidebar-module">
 	{% include causes.html %}
-  </div>
-
-  <div id="sidebar-module">
-	{% include events.html %}
-  </div>
-
-  <div id="sidebar-module">
-    {% include organizers.html %}
   </div>
 
   <div id="social">
