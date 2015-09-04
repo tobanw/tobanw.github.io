@@ -1,13 +1,13 @@
 # Theme customization - please change from the defaults!
 
 # Color for top bar, links, etc
-#highlight_color: '#3498db'
-highlight_color: '#0F3575' # upenn.edu background color
+highlight_color: '#3498db'
 
 # Profile links on the left sidebar, leave blank to ignore
 social:
-  facebook: gwwcpenn
-  github: pennea
+  gravatar: tobanw
+  facebook: tobanw
+  github: tobanw
   #twitter:
   #linkedin:
   #bitbucket:
@@ -16,16 +16,15 @@ social:
   #stackoverflow:
   #tumblr:
   #gplus:
-  #gravatar:
 
 # "Hi, I'm _______"
-#name:
-#email:
-title: Penn Effective Altruism
-#tagline:
+name: Toban Wiebe
+email: tobanw@gmail.com
+#title:
+tagline: Economics PhD student at Penn
 
 # Google Analytics key, leave blank to ignore
-google_analytics_key: UA-66755013-1
+#google_analytics_key: 
 
 # Toggle "Postings are my own" disclaimer in footer
 show_disclaimer: false
