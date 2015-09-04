@@ -1,0 +1,6 @@
+# General Jekyll Config
+markdown: kramdown
+highlighter: pygments
+url: http://pennea.org
+lsi: false
+exclude: [LICENSE, CNAME, README.md, TODO.md, .gitignore, Gemfile, Gemfile.lock]
