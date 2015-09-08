@@ -19,7 +19,8 @@ social:
 
 # "Hi, I'm _______"
 name: Toban Wiebe
-email: tobanw@gmail.com
+email-user: tobanw
+email-host: gmail.com
 title: Toban Wiebe
 tagline: Economics PhD student at Penn
 
