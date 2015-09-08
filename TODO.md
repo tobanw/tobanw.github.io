@@ -1,3 +1,1 @@
-- visited links
-- google analytics
-- email obfuscator
+- visited links hover

@@ -8,8 +8,8 @@ social:
   gravatar: 56e8e22796618ea3b817d4aae19c6e33
   facebook: tobanw
   github: tobanw
+  linkedin: tobanw
   #twitter:
-  #linkedin:
   #bitbucket:
   #hacker_news:
   #stackexchange:
@@ -21,11 +21,11 @@ social:
 name: Toban Wiebe
 email-user: tobanw
 email-host: gmail.com
-title: Toban Wiebe
+#title:
 tagline: Economics PhD student at Penn
 
 # Google Analytics key, leave blank to ignore
-#google_analytics_key: 
+google_analytics_key: UA-67313542-1
 
 # Toggle "Postings are my own" disclaimer in footer
 show_disclaimer: false
