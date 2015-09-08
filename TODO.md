@@ -1,5 +1,3 @@
-- permalink style
 - visited links
-- atom.xml bugfix
 - google analytics
 - email obfuscator
