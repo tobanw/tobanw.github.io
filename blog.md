@@ -10,7 +10,8 @@ permalink: /blog/
   <h1 class="page-heading">Posts</h1>
 
   <ul class="post-list">
-    {% for post in site.categories.blog %}
+    {% for post in site.posts %}
+	{% if post.type == "post" %}
       <li>
         <span class="post-meta">{{ post.date | date: "%B %-d, %Y" }}</span>
 
@@ -18,6 +19,7 @@ permalink: /blog/
           <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
         </h2>
       </li>
+    {% endif %}
     {% endfor %}
   </ul>
 
