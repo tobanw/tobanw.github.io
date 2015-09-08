@@ -4,4 +4,4 @@ highlighter: pygments
 url: http://tobanwiebe.com
 lsi: false
 exclude: [LICENSE, CNAME, README.md, TODO.md, .gitignore, Gemfile, Gemfile.lock]
-permalink: /:year/:month/:title/
+permalink: /:year/:month/:title
