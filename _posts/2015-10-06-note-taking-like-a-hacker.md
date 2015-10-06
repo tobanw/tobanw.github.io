@@ -29,8 +29,11 @@ With vim, I use the [vim-preview][vp] plugin to render an html preview.
 On a mobile device, I can of course access the plaintext through the Dropbox app.
 But there are also Markdown apps like [Jotterpad][jot] which can connect to Dropbox.
 
+And that's it! Very simple, but now my notes are in a very portable format. (Speaking of which, I wrote a [little script][exp] to export notes from Laverna.)
+
 [tom]:http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html
 [se]:https://stackedit.io
 [lav]:https://laverna.cc
 [vp]:https://github.com/greyblake/vim-preview
 [jot]:http://2appstudio.com/jotterpad/
+[exp]:https://github.com/tobanw/laverna-export
