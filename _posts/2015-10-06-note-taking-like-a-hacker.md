@@ -16,7 +16,7 @@ My note taking system had to have these features:
 - Markdown based
 - Accessible across devices
 - Edit notes in any text editor
-- MathJax enabled for writing math with LaTeX
+- MathJax enabled for writing math with \\(\LaTeX\\)
 
 I don't really care about embedding media or features like Evernote's clipping functionality.
 As a PhD student, I mostly just want to save academic things like research ideas and paper summaries.
