@@ -23,6 +23,6 @@ permalink: /blog/
     {% endfor %}
   </ul>
 
-  <p class="rss-subscribe">subscribe <a href="{{ "/atom.xml" | prepend: site.baseurl }}">via RSS</a></p>
+  <p class="rss-subscribe">subscribe <a href="{{ site.data.theme.feedurl }}">via RSS</a></p>
 
 </div>
