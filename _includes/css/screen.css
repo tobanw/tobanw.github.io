@@ -53,12 +53,19 @@ a {
 }
 
 a:hover {
-  color: {{ site.data.theme.highlight_color }};
-  text-decoration: underline;
+  color: {{ site.data.theme.focus_color }};
 }
 
 a:visited {
   color: {{ site.data.theme.highlight_color }};
+}
+
+a:focus {
+  color: {{ site.data.theme.focus_color }};
+}
+
+a:active {
+  color: red;
 }
 
 table {
@@ -162,6 +169,7 @@ nav h1, nav h2 {
 .sidebar {
   padding-top: 25px;
   font-family: "open sans", sans-serif;
+  float: {{ site.data.theme.sidebar_position }};
 }
 
 .sidebar p {
@@ -174,10 +182,11 @@ nav h1, nav h2 {
 
 .content {
   font: 400 16px/22px "open sans", sans-serif;
-  border-left: 1px solid #DDD;
-  padding-left: 40px;
+  border-{{ site.data.theme.sidebar_position }}: 1px solid #DDD;
+  padding-{{ site.data.theme.sidebar_position }}: 40px;
   padding-top: 25px;
   min-height: 400px;
+  float: {{ site.data.theme.content_position }};
 }
 
 .footer {

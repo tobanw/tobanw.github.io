@@ -17,25 +17,36 @@
 
   <link rel="stylesheet" href="/assets/css/all.css">
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.min.css">
+</head>
+<body>
+	<div class="container">
+		<div class="eleven columns content">
+			{{ content }}
+
+			<div class="footer">
+				{% include footer.html %}
+			</div>
+		</div>
+		<div class="four columns sidebar">
+			{% include sidebar.html %}
+		</div>
+	</div>
+
+  <!-- load mathjax -->
   <script type="text/javascript"
 	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
   </script>
-</head>
-<body>
-  <div class="container">
-    <div class="four columns sidebar">
-      {% include sidebar.html %}
-    </div>
-
-    <div class="eleven columns content">
-      {{ content }}
-
-      <div class="footer">
-        {% include footer.html %}
-      </div>
-    </div>
-  </div>
-
+  <!-- load mousetrap (keyboard handler) -->
+  <script type="text/javascript"
+	  src="/assets/scripts/mousetrap.min.js">
+  </script>
+  <script type="text/javascript"
+	  src="/assets/scripts/mousetrap-bind-dictionary.min.js">
+  </script>
+  <!-- load my keyboard shortcuts -->
+  <script type="text/javascript"
+	  src="/assets/scripts/keyboard.js">
+  </script>
 {% include analytics.html %}
 </body>
 </html>

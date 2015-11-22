@@ -2,8 +2,13 @@
 
 # Color for top bar, links, etc
 highlight_color: '#3498db'
+focus_color: '#aa0000'
 
-# Profile links on the left sidebar, leave blank to ignore
+# layout position: sidebar and content
+sidebar_position: left
+content_position: right
+
+# Profile links on the sidebar, leave blank to ignore
 social:
   gravatar: 56e8e22796618ea3b817d4aae19c6e33
   facebook: tobanw
