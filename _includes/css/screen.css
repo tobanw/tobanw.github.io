@@ -118,7 +118,7 @@ nav h1, nav h2 {
   text-align: center;
 }
 
-#sidebar-module {
+.sidebar-module {
   margin-top: 10px;
   margin-bottom: 15px;
   border-top: dotted #ddd;
