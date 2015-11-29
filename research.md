@@ -5,10 +5,10 @@ nav: main
 permalink: /research/
 ---
 
-###Papers
+### Papers
 
 In progress...
 
-###Presentations
+### Presentations
 
 - [Game Theory and Evolution](/assets/GameTheoryEvolution.pdf): Canadian Undergraduate Mathematics Conference 2012
