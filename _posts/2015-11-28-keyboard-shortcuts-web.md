@@ -10,7 +10,7 @@ I always just figured that it must be prohibitively difficult to implement keybo
 It turns out, however, that implementing keyboard shortcuts is embarassingly easy.
 
 With no knowledge of javascript, I was able to add some simple keyboard navigation to this website ([source repo](https://github.com/tobanw/tobanw.github.io)).
-This website is built with Jekyll, but this method would work on any website as it only uses javascript.
+Though this website is built with [Jekyll](http://jekyllrb.com/), this method would work on any website as it only uses some simple client-side javascript.
 I used the excellent [Mousetrap](https://craig.is/killing/mice) library to handle keyboard input, and wrote some simple [navigation commands](https://github.com/tobanw/tobanw.github.io/blob/master/assets/scripts/keyboard.js) in javascript.
 
 I implemented two kinds of navigation in the spirit of Gmail: jumping and list navigation.
