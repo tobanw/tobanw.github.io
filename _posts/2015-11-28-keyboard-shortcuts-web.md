@@ -9,7 +9,7 @@ It's been nice to see the adoption of keyboard shortcuts in other sites, but for
 I always just figured that it must be prohibitively difficult to implement keyboard shortcuts in a website, and so only the big players could do it.
 It turns out, however, that implementing keyboard shortcuts is embarassingly easy.
 
-With no knowledge of javascript, I was able to add some simple keyboard navigation to this website.
+With no knowledge of javascript, I was able to add some simple keyboard navigation to this website ([source repo](https://github.com/tobanw/tobanw.github.io)).
 This website is built with Jekyll, but this method would work on any website as it only uses javascript.
 I used the excellent [Mousetrap](https://craig.is/killing/mice) library to handle keyboard input, and wrote some simple [navigation commands](https://github.com/tobanw/tobanw.github.io/blob/master/assets/scripts/keyboard.js) in javascript.
 
