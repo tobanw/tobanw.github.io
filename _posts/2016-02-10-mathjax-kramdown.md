@@ -4,7 +4,7 @@ title:  "MathJax with Kramdown"
 date:   2016-02-10 10:30:00
 type: post
 ---
-Last week, GitHub Pages upgraded to [Jekyll 3.0][jekyll].
+Last week, GitHub Pages [upgraded to Jekyll 3.0][jekyll].
 One major consequence of the upgrade is that, for Jekyll sites hosted on GitHub Pages, _only_ the `kramdown` engine is supported.
 
 This broke my existing MathJax setup -- I was using the `redcarpet` Markdown engine before, which understood math with the delimiters `\\( \LaTeX \\)` and `\\[ \LaTeX \\]` for inline and displayed math, respectively.
