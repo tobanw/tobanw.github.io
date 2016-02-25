@@ -17,6 +17,7 @@ I implemented two kinds of navigation in the spirit of Gmail: jumping and list n
 (Note: I'm using the [bind dictionary](https://github.com/ccampbell/mousetrap/tree/master/plugins/bind-dictionary) extension to bind multiple keys at once):
 
 ### Jumping
+
 To get <`g` then `h`> style jumping, all you need is:
 
 ```javascript
@@ -30,6 +31,7 @@ Mousetrap.bind({
 That's it: incredibly simple.
 
 ### Blog post navigation
+
 Adding j/k navigation was a little more complicated.
 I wrote [a function](https://github.com/tobanw/tobanw.github.io/blob/master/assets/scripts/keyboard.js) `blogNav` which takes key and does the following:
 
@@ -49,6 +51,7 @@ Mousetrap.bind({
 ```
 
 ### Conclusion
+
 Adding keyboard shortcuts to a website is surprisingly easy.
 It's unfortunate that most web development is entirely focused on mouse input, relegating keyboard users to hacky extensions like [vimium](https://vimium.github.io/) and [pentadactyl](http://5digits.org/pentadactyl/).
 Hopefully [Mousetrap](https://craig.is/killing/mice) can help more websites become keyboard friendly.

@@ -1,5 +1,11 @@
 # General Jekyll Config
 url: http://tobanwiebe.com
+highlighter: rouge
+markdown: kramdown
+kramdown:
+    input: GFM
+    hard_wrap: false
+    syntax_highlighter: rouge
 lsi: false
 exclude: [LICENSE, CNAME, README.md, TODO.md, .gitignore, Gemfile, Gemfile.lock]
 permalink: /blog/:year/:month/:title
