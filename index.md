@@ -3,7 +3,7 @@ layout: page
 title: Home
 permalink: /
 ---
-I'm a 3rd year PhD student in Economics at the University of Pennsylvania.
+I'm a PhD student in Economics at the University of Pennsylvania.
 I'm broadly interested in applied microeconomics.
 My current research is focused on the marriage market in an equilibrium search framework.
 

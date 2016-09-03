@@ -14,7 +14,7 @@ Then make a directory for the site repository, navigate to it in the command lin
 
 ```
 cd location/to/hold/repo
-git clone https://github.com/tobanw/lagom.git
+git clone https://github.com/username/jekyll-repo.git
 ```
 
 The cloning url is always listed on GitHub.
@@ -32,7 +32,7 @@ This command will use `Gemfile` (in the repository) to generate the `Gemfile.loc
 To launch a local webserver that will build and show the site, as well as watch for any changes, run this from the command line:
 
 ```
-cd path/to/pennea-repo
+cd path/to/site-repo
 bundle exec jekyll serve
 ```
 Leave that terminal window running (you can see it rebuilding the site every time you edit a file) and point your browser to `http://localhost:4000`.
