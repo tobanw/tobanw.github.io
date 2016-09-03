@@ -1,0 +1,57 @@
+---
+permalink: /.well-known/keybase.txt
+---
+==================================================================
+https://keybase.io/toban
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://tobanwiebe.com
+  * I am toban (https://keybase.io/toban) on keybase.
+  * I have a public key ASDU_lOm5PMAvVT1l4sySjv_8x6dYjqplZQjmWqRabGMYgo
+
+To do so, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "eldest_kid": "0120d4fe53a6e4f300bd54f5978b324a3bfff31e9d623aa9959423996a9169b18c620a",
+            "host": "keybase.io",
+            "kid": "0120d4fe53a6e4f300bd54f5978b324a3bfff31e9d623aa9959423996a9169b18c620a",
+            "uid": "266352bc80a02471e454f64a87d43719",
+            "username": "toban"
+        },
+        "service": {
+            "hostname": "tobanwiebe.com",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "client": {
+        "name": "keybase.io go client",
+        "version": "1.0.17"
+    },
+    "ctime": 1472929600,
+    "expire_in": 504576000,
+    "merkle_root": {
+        "ctime": 1472929573,
+        "hash": "fb5eaa9647e7b7a7ae5b33b9132950712563c8e161d28ff2cd67a6c4934f7d5d5d231340e9e6ca025d89f949b439883c5a7dd7f7c2b68d61c533f6f148d71134",
+        "seqno": 617489
+    },
+    "prev": "e5323f83e17a721ece3898e68bb650902786a45160a40f116a46edb52e2c4210",
+    "seqno": 8,
+    "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEg1P5TpuTzAL1U9ZeLMko7//MenWI6qZWUI5lqkWmxjGIKp3BheWxvYWTFAvJ7ImJvZHkiOnsia2V5Ijp7ImVsZGVzdF9raWQiOiIwMTIwZDRmZTUzYTZlNGYzMDBiZDU0ZjU5NzhiMzI0YTNiZmZmMzFlOWQ2MjNhYTk5NTk0MjM5OTZhOTE2OWIxOGM2MjBhIiwiaG9zdCI6ImtleWJhc2UuaW8iLCJraWQiOiIwMTIwZDRmZTUzYTZlNGYzMDBiZDU0ZjU5NzhiMzI0YTNiZmZmMzFlOWQ2MjNhYTk5NTk0MjM5OTZhOTE2OWIxOGM2MjBhIiwidWlkIjoiMjY2MzUyYmM4MGEwMjQ3MWU0NTRmNjRhODdkNDM3MTkiLCJ1c2VybmFtZSI6InRvYmFuIn0sInNlcnZpY2UiOnsiaG9zdG5hbWUiOiJ0b2JhbndpZWJlLmNvbSIsInByb3RvY29sIjoiaHR0cDoifSwidHlwZSI6IndlYl9zZXJ2aWNlX2JpbmRpbmciLCJ2ZXJzaW9uIjoxfSwiY2xpZW50Ijp7Im5hbWUiOiJrZXliYXNlLmlvIGdvIGNsaWVudCIsInZlcnNpb24iOiIxLjAuMTcifSwiY3RpbWUiOjE0NzI5Mjk2MDAsImV4cGlyZV9pbiI6NTA0NTc2MDAwLCJtZXJrbGVfcm9vdCI6eyJjdGltZSI6MTQ3MjkyOTU3MywiaGFzaCI6ImZiNWVhYTk2NDdlN2I3YTdhZTViMzNiOTEzMjk1MDcxMjU2M2M4ZTE2MWQyOGZmMmNkNjdhNmM0OTM0ZjdkNWQ1ZDIzMTM0MGU5ZTZjYTAyNWQ4OWY5NDliNDM5ODgzYzVhN2RkN2Y3YzJiNjhkNjFjNTMzZjZmMTQ4ZDcxMTM0Iiwic2Vxbm8iOjYxNzQ4OX0sInByZXYiOiJlNTMyM2Y4M2UxN2E3MjFlY2UzODk4ZTY4YmI2NTA5MDI3ODZhNDUxNjBhNDBmMTE2YTQ2ZWRiNTJlMmM0MjEwIiwic2Vxbm8iOjgsInRhZyI6InNpZ25hdHVyZSJ9o3NpZ8RAHVYHkcDMicbzQC7E7315VQbFa8O8JrkhGWc9aq/zEUoyHd2P0vIoc9McQEMdmawbt1ii7pfUUdUce+oZ39rKBahzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIOMiIFv24IKkiMyxgOKsv9fyRnmROwSIufJWVZmhtESWo3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/toban
+
+==================================================================
