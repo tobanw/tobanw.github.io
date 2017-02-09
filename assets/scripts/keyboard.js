@@ -31,7 +31,7 @@ function blogNav(key) {
 Mousetrap.bind({
 	'g h': function() {	window.location.href = "/"; },
 	'g b': function() {	window.location.href = "/blog"; },
-	'g r': function() {	window.location.href = "/research"; },
+	'g p': function() {	window.location.href = "/projects"; },
 	'j': function() { blogNav('j'); },
 	'k': function() { blogNav('k'); },
 	'o': function() { blogNav('o'); }
