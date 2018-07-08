@@ -27,10 +27,11 @@ The cloning url is always listed on GitHub.
 From the repository directory, simply run
 
 ```sh
-bundle install
+bundle install --path vendor/bundle
 ```
 
 This command will use `Gemfile` (in the repository) to generate `Gemfile.lock` and install the dependencies specified therein.
+They will be installed into the local directory `./vendor/bundle/` so that it won't interfere with your system ruby/gems.
 
 
 # Basic local usage

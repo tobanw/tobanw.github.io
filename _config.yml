@@ -3,9 +3,17 @@ url: http://tobanwiebe.com
 highlighter: rouge
 markdown: kramdown
 kramdown:
-    input: GFM
-    hard_wrap: false
-    syntax_highlighter: rouge
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
 lsi: false
-exclude: [LICENSE, CNAME, README.md, TODO.md, .gitignore, Gemfile, Gemfile.lock]
+exclude:
+  - LICENSE
+  - CNAME
+  - README.md
+  - TODO.md
+  - .gitignore
+  - vendor/bundle
+  - Gemfile
+  - Gemfile.lock
 permalink: /blog/:year/:month/:title
