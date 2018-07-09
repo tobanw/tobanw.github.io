@@ -1,5 +1,6 @@
+var postclass = "post-link";
+
 function blogNav(key) {
-	var postclass = "post-link";
 
 	// convert HTMLCollection to array for indexing
 	var blogposts = [].slice.call(document.getElementsByClassName(postclass));
@@ -7,13 +8,8 @@ function blogNav(key) {
 
 	var currentfocus = document.activeElement; // get current index of focused post
 
-	// open focused link
-	if ( currentfocus.className === postclass && key === 'o' ) {
-		window.location.href = currentfocus;
-	}
-
 	// get current post index
-	if ( currentfocus.className === postclass ) {
+	if ( currentfocus.className.includes(postclass) ) {
 		postindex = blogposts.indexOf(currentfocus);
 	}
 
@@ -22,10 +18,22 @@ function blogNav(key) {
 		postindex++;
 	} else if (key === 'k' && postindex > 0 ) {
 		postindex--;
+	} else if (key === 'g') {
+		postindex = 0;
+	} else if (key === 'G') {
+		postindex = blogposts.length - 1;
 	}
 
 	// move focus
 	blogposts[postindex].focus();
+}
+
+function kbLaunch() {
+	var currentfocus = document.activeElement; // get current index of focused post
+	// open focused link
+	if ( currentfocus.className.includes(postclass) ) {
+		window.location.href = currentfocus;
+	}
 }
 
 Mousetrap.bind({
@@ -34,5 +42,7 @@ Mousetrap.bind({
 	'g p': function() {	window.location.href = "/projects"; },
 	'j': function() { blogNav('j'); },
 	'k': function() { blogNav('k'); },
-	'o': function() { blogNav('o'); }
+	'g g': function() { blogNav('g'); },
+	'G': function() { blogNav('G'); },
+	'o': function() { kbLaunch(); }
 })
