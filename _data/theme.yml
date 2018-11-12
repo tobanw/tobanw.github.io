@@ -11,9 +11,9 @@ content_position: right
 # Profile links on the sidebar, leave blank to ignore
 social:
   gravatar: 56e8e22796618ea3b817d4aae19c6e33
-  facebook: tobanw
   github: tobanw
   linkedin: tobanw
+  #facebook: tobanw
   #twitter:
   #bitbucket:
   #hacker_news:
