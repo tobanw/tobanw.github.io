@@ -14,7 +14,6 @@ permalink: /blog/:year/:month/:title/
 
 <div id="post">
 
-	
 {% if page.categories contains 'event' %}
 
 <h4>Date</h4>
@@ -27,6 +26,18 @@ permalink: /blog/:year/:month/:title/
 
 {% endif %}
 
+{{ content }}
 
-  {{ content }}
+<div class="report">
+<p>
+  Spot an error? Have a suggestion? <a title="{{ site.data.theme.social.github }}'s blog posts on Github" href="https://github.com/{{ site.data.theme.social.github }}/blog-posts"> Submit an issue </a> or
+  <!--Used to prevent email spam-->
+  <script type="text/javascript">
+	  document.write('<a class="page-nav" href="mailto:' + '{{site.data.theme.email-user}}' + '@' + '{{site.data.theme.email-host}}' + '">')
+  </script>
+  contact me</a>
+  .
+</p>
+</div>
+
 </div>

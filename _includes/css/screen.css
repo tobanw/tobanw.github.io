@@ -260,6 +260,13 @@ i.fa-hn {
   text-decoration: none;
 }
 
+.report p {
+  color: #aaa;
+  font-style: italic;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
 .disclaimer p {
   margin-top: 5px;
   font-size: 11px;
