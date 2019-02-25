@@ -6,7 +6,7 @@ permalink: /
 I'm a Data Scientist at [Prosper](https://www.prosper.com/), where I build machine learning models for credit, fraud, marketing, and more.
 I earned a PhD in Economics from the University of Pennsylvania, where [my research](https://repository.upenn.edu/edissertations/2906/) centered on the empirical study of marriage markets using equilibrium matching models.
 During my PhD, I developed a Julia package, [MarriageMarkets.jl](https://github.com/tobanw/MarriageMarkets.jl), for solving equilibria of various marriage market models.
-I'm also an [Insight Data Science](http://insightdatascience.com/) alum (Summer 2017, Silicon Valley).
+I'm also an [Insight Data Science](https://www.insightdatascience.com/) alum (Summer 2017, Silicon Valley).
 
 I'm an unabashed computer nerd with a strong preference for keyboard-driven interfaces (take note of the keyboard navigation on this website).
 My essentials are:
