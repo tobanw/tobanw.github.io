@@ -23,3 +23,7 @@ My essentials are:
 
 Check out my [dotfiles](https://github.com/tobanw/dotfiles) to see how I configure them.
 
+Naturally, I'm a bit of an ergonomic keyboard connoisseur.
+My daily driver is the [Kinesis Advantage](https://kinesis-ergo.com/keyboards/advantage2-keyboard/) (modified with some [O-rings](http://www.wasdkeyboards.com/index.php/review/product/list/id/42/?limit=50) to reduce travel on keys farther from the home row).
+My other keyboard is the [Keyboardio Model-01](https://shop.keyboard.io/).
+Both keyboards are a pleasure to type on.
