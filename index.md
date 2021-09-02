@@ -4,7 +4,7 @@ title: Home
 permalink: /
 ---
 
-I'm a Data Scientist at [Uber Freight][uberfreight], where I work as an economics specialist, optimizing pricing and matching for the Uber Freight marketplace.
+I'm an Economist at [Instacart][instacart], where my work is focused on the intersection of economics, econometrics, and machine learning.
 I have a PhD in Economics from the University of Pennsylvania, where [my research][dissertation] centered on the empirical study of marriage markets using equilibrium search & matching models.
 I'm also an [Insight Data Science][insight] alum (Summer 2017, Silicon Valley).
 
@@ -28,7 +28,7 @@ My daily driver is the [Kinesis Advantage][kinesis-advantage] (modified with som
 My other keyboard is the [Keyboardio Model-01][model01].
 Both keyboards are a pleasure to type on.
 
-[uberfreight]:https://www.uberfreight.com/
+[instacart]:https://www.instacart.com/
 [dissertation]:https://repository.upenn.edu/edissertations/2906/
 [insight]:https://www.insightdatascience.com/
 [package]:https://github.com/tobanw/MarriageMarkets.jl

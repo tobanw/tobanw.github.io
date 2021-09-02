@@ -1,6 +1,7 @@
 # Jekyll Setup
 
 ## Install ruby
+
 Linux, Mac, Windows...
 
 ## Install bundler
@@ -27,7 +28,8 @@ The cloning url is always listed on GitHub.
 From the repository directory, simply run
 
 ```sh
-bundle install --path vendor/bundle
+bundle config set path 'vendor/bundle'
+bundle install
 ```
 
 This command will use `Gemfile` (in the repository) to generate `Gemfile.lock` and install the dependencies specified therein.
