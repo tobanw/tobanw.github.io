@@ -1,0 +1,20 @@
+---
+import PostLayout from "@layouts/PostLayout.astro";
+import { getVisibleWriting, getWritingUrl } from "@lib/content";
+import { render } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getVisibleWriting();
+  return entries.map((entry) => ({
+    params: { slug: getWritingUrl(entry).replace(/^\/writing\//, "").replace(/\/$/, "") },
+    props: { entry }
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<PostLayout entry={entry}>
+  <Content />
+</PostLayout>

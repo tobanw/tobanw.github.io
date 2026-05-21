@@ -1,0 +1,114 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import WritingList from "@components/WritingList.astro";
+import {
+  bitToListItem,
+  getFeaturedProjects,
+  getVisibleBits,
+  getVisibleWriting,
+  writingToListItem
+} from "@lib/content";
+import { SITE } from "@lib/site";
+
+const [projects, writing, bits] = await Promise.all([
+  getFeaturedProjects(),
+  getVisibleWriting(),
+  getVisibleBits()
+]);
+const recentWriting = writing.slice(0, 3).map(writingToListItem);
+const recentBits = bits.slice(0, 4).map(bitToListItem);
+---
+
+<BaseLayout>
+  <section class="hero" aria-labelledby="home-title">
+    <div>
+      <p class="eyebrow">toban@web:~$ whoami</p>
+      <h1 id="home-title">Toban Wiebe</h1>
+      <p class="lede">
+        I lead AI/ML/DS at <a href="https://keeper.ai/">Keeper</a>, where we're
+        building an automated AI matchmaking system for high-throughput marriage formation.
+        My academic background is in economics (UPenn PhD) where my
+        <a href="https://repository.upenn.edu/entities/publication/22066430-3f25-47d2-a46a-39a9cc4cc001">research</a>
+        focused on equilibrium search and matching models applied to marriage markets.
+      </p>
+      <p class="lede lede-secondary">
+        Stuff I'm excited about: matching markets, Bayesian inference, keyboard-driven interfaces,
+        AI & robots, Starship, and tools that make careful thinking easier.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="writing-title">
+    <div class="section-head">
+      <div>
+        <p class="section-kicker">writing</p>
+        <h2 id="writing-title">Essays.</h2>
+      </div>
+      <a class="text-link" href="/writing/">all writing</a>
+    </div>
+    <WritingList entries={recentWriting} />
+  </section>
+
+  <section class="section" aria-labelledby="bits-title">
+    <div class="section-head">
+      <div>
+        <p class="section-kicker">bits</p>
+        <h2 id="bits-title">Short posts.</h2>
+      </div>
+      <a class="text-link" href="/bits/">all bits</a>
+    </div>
+    <WritingList entries={recentBits} />
+  </section>
+
+  <section class="section" aria-labelledby="work-title">
+    <div class="section-head">
+      <div>
+        <p class="section-kicker">selected work</p>
+        <h2 id="work-title">Models, tools, and habits.</h2>
+      </div>
+      <a class="text-link" href="/projects/">all projects</a>
+    </div>
+
+    <div class="grid">
+      {
+        projects.map((project) => (
+          <article class="project-card">
+            <h3>{project.data.title}</h3>
+            <p>{project.data.summary}</p>
+            <div class="project-actions">
+              {project.data.url && <a href={project.data.url}>open</a>}
+              {project.data.repo && <a href={project.data.repo}>source</a>}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="contact-title">
+    <div class="section-head">
+      <div>
+        <p class="section-kicker">links</p>
+        <h2 id="contact-title">Find me elsewhere.</h2>
+      </div>
+    </div>
+    <div class="grid">
+      <article class="note-card">
+        <h3>GitHub</h3>
+        <p><a href={SITE.github}>tobanw</a></p>
+      </article>
+      <article class="note-card">
+        <h3>LinkedIn</h3>
+        <p><a href={SITE.linkedin}>professional profile</a></p>
+      </article>
+      <article class="note-card">
+        <h3>X</h3>
+        <p><a href={SITE.x}>@TobanWiebe</a></p>
+      </article>
+      <article class="note-card">
+        <h3>Email</h3>
+        <p><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

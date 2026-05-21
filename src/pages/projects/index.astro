@@ -1,0 +1,40 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { getAllProjects } from "@lib/content";
+
+const projects = await getAllProjects();
+---
+
+<BaseLayout title="Projects" description="Selected projects and artifacts by Toban Wiebe.">
+  <section class="page-intro">
+    <p class="eyebrow">/projects</p>
+    <h1>Projects</h1>
+    <p>
+      A small set of work across economic modeling, simulation, and
+      keyboard-first tooling.
+    </p>
+  </section>
+
+  <div class="grid">
+    {
+      projects.map((project) => (
+        <article class="project-card">
+          <p class="project-meta">{project.data.year ?? "now"}</p>
+          <h2>{project.data.title}</h2>
+          <p>{project.data.summary}</p>
+          {project.data.tags && (
+            <div class="tag-row" aria-label="Tags">
+              {project.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+          <div class="project-actions">
+            {project.data.url && <a href={project.data.url}>open</a>}
+            {project.data.repo && <a href={project.data.repo}>source</a>}
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</BaseLayout>

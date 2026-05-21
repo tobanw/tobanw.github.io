@@ -1,0 +1,26 @@
+---
+import { datetime, formatDate, type ListItem } from "@lib/content";
+
+interface Props {
+  entries: ListItem[];
+}
+
+const { entries } = Astro.props;
+---
+
+<ol class="writing-list" data-writing-list>
+  {
+    entries.map((entry) => (
+      <li>
+        <a class="post-link" data-kb-item href={entry.url}>
+          <span class="post-meta">
+            <time datetime={datetime(entry.date)}>{formatDate(entry.date)}</time>
+            {entry.badge && <span class="legacy-label">{entry.badge}</span>}
+          </span>
+          <span class="post-title">{entry.title}</span>
+          {entry.description && <span class="post-description">{entry.description}</span>}
+        </a>
+      </li>
+    ))
+  }
+</ol>

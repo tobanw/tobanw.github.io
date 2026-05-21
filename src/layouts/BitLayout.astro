@@ -1,0 +1,39 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { datetime, formatDate, type BitEntry } from "@lib/content";
+
+interface Props {
+  entry: BitEntry;
+}
+
+const { entry } = Astro.props;
+---
+
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  canonical={entry.data.permalink}
+  bodyClass="writing-page"
+>
+  <article class="post">
+    <header class="post-header">
+      <a class="back-link" href="/bits/">bits</a>
+      <h1>{entry.data.title}</h1>
+      <p class="post-date">
+        <time datetime={datetime(entry.data.date)}>{formatDate(entry.data.date)}</time>
+        <span class="legacy-label">bit</span>
+      </p>
+      {
+        entry.data.latestVersion && (
+          <p class="notice">
+            This short-form version is preserved at its original URL. The latest
+            essay version is now in <a href={entry.data.latestVersion}>writing</a>.
+          </p>
+        )
+      }
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

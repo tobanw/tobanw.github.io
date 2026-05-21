@@ -1,0 +1,20 @@
+---
+import WritingList from "@components/WritingList.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { getVisibleWriting, writingToListItem } from "@lib/content";
+
+const entries = (await getVisibleWriting()).map(writingToListItem);
+---
+
+<BaseLayout title="Writing" description="Essays by Toban Wiebe on economics, math, programming, and tools.">
+  <section class="page-intro">
+    <p class="eyebrow">/writing</p>
+    <h1>Writing</h1>
+    <p>
+      Essays on economics, math, programming, and tools. Shorter notes
+      now live in <a href="/bits/">bits</a>.
+    </p>
+  </section>
+
+  <WritingList entries={entries} />
+</BaseLayout>

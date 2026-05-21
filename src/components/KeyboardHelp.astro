@@ -1,0 +1,39 @@
+---
+import { NAV } from "@lib/site";
+---
+
+<button class="keyboard-trigger" id="keyboard-help-trigger" type="button" aria-haspopup="dialog">
+  <kbd>?</kbd>
+  <span>keys</span>
+</button>
+
+<dialog class="keyboard-dialog" id="keyboard-help-dialog" aria-labelledby="keyboard-help-title">
+  <div class="dialog-head">
+    <h2 id="keyboard-help-title">Keyboard</h2>
+    <button class="icon-button" id="keyboard-help-close" type="button" aria-label="Close keyboard help">
+      x
+    </button>
+  </div>
+  <dl class="shortcut-list">
+    {
+      NAV.map((item) => (
+        <>
+          <dt>
+            {item.key.split(" ").map((key) => (
+              <kbd>{key}</kbd>
+            ))}
+          </dt>
+          <dd>go to {item.label}</dd>
+        </>
+      ))
+    }
+    <dt><kbd>j</kbd>/<kbd>k</kbd></dt>
+    <dd>move focus down/up in list</dd>
+    <dt><kbd>o</kbd></dt>
+    <dd>open focused item</dd>
+    <dt><kbd>t</kbd></dt>
+    <dd>toggle light/dark theme</dd>
+    <dt><kbd>?</kbd></dt>
+    <dd>show this help</dd>
+  </dl>
+</dialog>

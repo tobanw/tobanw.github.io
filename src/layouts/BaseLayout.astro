@@ -1,0 +1,67 @@
+---
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import KeyboardHelp from "@components/KeyboardHelp.astro";
+import { SITE } from "@lib/site";
+import "@styles/global.css";
+import "katex/dist/katex.min.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  bodyClass?: string;
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  canonical,
+  bodyClass
+} = Astro.props;
+
+const pageTitle = title === SITE.title ? SITE.title : `${title} / ${SITE.title}`;
+const canonicalUrl = new URL(canonical ?? Astro.url.pathname, SITE.url).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <script is:inline>
+      (() => {
+        let stored = null;
+        try {
+          stored = localStorage.getItem("theme");
+        } catch {
+          stored = null;
+        }
+        const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = stored || (systemDark ? "dark" : "light");
+      })();
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.name} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" type="application/atom+xml" title={SITE.name} href="/atom.xml" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+  </head>
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="page-shell">
+      <Header />
+      <main id="main">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    <KeyboardHelp />
+    <script is:inline src="/scripts/theme.js?v=2" defer></script>
+    <script is:inline src="/scripts/keyboard.js?v=2" defer></script>
+  </body>
+</html>
