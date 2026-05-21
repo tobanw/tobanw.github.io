@@ -1,0 +1,39 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { datetime, formatDate, getWritingUrl, type WritingEntry } from "@lib/content";
+
+interface Props {
+  entry: WritingEntry;
+}
+
+const { entry } = Astro.props;
+---
+
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  canonical={getWritingUrl(entry)}
+  bodyClass="writing-page"
+>
+  <article class="post">
+    <header class="post-header">
+      <a class="back-link" href="/writing/">writing</a>
+      <h1>{entry.data.title}</h1>
+      <p class="post-date">
+        <span>
+          Published <time datetime={datetime(entry.data.date)}>{formatDate(entry.data.date)}</time>
+        </span>
+        {
+          entry.data.updated && (
+            <span>
+              Updated <time datetime={datetime(entry.data.updated)}>{formatDate(entry.data.updated)}</time>
+            </span>
+          )
+        }
+      </p>
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

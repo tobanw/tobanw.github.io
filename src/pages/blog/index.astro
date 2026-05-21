@@ -1,0 +1,24 @@
+---
+import WritingList from "@components/WritingList.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { bitToListItem, getVisibleBits } from "@lib/content";
+
+const entries = (await getVisibleBits()).map(bitToListItem);
+---
+
+<BaseLayout
+  title="Bits"
+  description="Short-form posts and notes by Toban Wiebe."
+  canonical="/bits/"
+>
+  <section class="page-intro">
+    <p class="eyebrow">/blog -> /bits</p>
+    <h1>Bits</h1>
+    <p>
+      Short posts, notes, and old blog entries. The original `/blog/...` URLs
+      still work; the preferred index is <a href="/bits/">/bits/</a>.
+    </p>
+  </section>
+
+  <WritingList entries={entries} />
+</BaseLayout>

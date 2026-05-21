@@ -1,0 +1,31 @@
+---
+import { NAV, SITE } from "@lib/site";
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string) {
+  if (href === "/") return currentPath === "/";
+  return currentPath.startsWith(href);
+}
+---
+
+<header class="site-header">
+  <a class="brand" href="/" aria-label={`${SITE.name} home`}>
+    <strong>{SITE.name}</strong>
+  </a>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    {
+      NAV.map((item) => (
+        <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+          {item.label}
+        </a>
+      ))
+    }
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode">
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path data-theme-icon />
+      </svg>
+    </button>
+  </nav>
+</header>

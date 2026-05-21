@@ -1,0 +1,20 @@
+---
+import WritingList from "@components/WritingList.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { bitToListItem, getVisibleBits } from "@lib/content";
+
+const entries = (await getVisibleBits()).map(bitToListItem);
+---
+
+<BaseLayout title="Bits" description="Short-form posts and notes by Toban Wiebe.">
+  <section class="page-intro">
+    <p class="eyebrow">/bits</p>
+    <h1>Bits</h1>
+    <p>
+      Short-form writing, notes, and legacy blog posts. Longer essays live in
+      <a href="/writing/">writing</a>.
+    </p>
+  </section>
+
+  <WritingList entries={entries} />
+</BaseLayout>

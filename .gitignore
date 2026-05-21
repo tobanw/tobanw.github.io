@@ -1,7 +1,8 @@
-_site/
-.bundle/
-vendor/
-*.gem
+node_modules/
+dist/
+.astro/
+.npm-cache/
+.vercel/
+npm-debug.log*
 *.swp
 *~
-Gemfile.lock
