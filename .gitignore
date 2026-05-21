@@ -6,3 +6,5 @@ dist/
 npm-debug.log*
 *.swp
 *~
+!public/apple-touch-icon.png
+!public/favicon-32x32.png

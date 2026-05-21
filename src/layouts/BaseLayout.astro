@@ -45,6 +45,10 @@ const canonicalUrl = new URL(canonical ?? Astro.url.pathname, SITE.url).toString
     <meta name="description" content={description} />
     <meta name="author" content={SITE.name} />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=3" />
+    <link rel="shortcut icon" href="/favicon.ico?v=3" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
     <link rel="alternate" type="application/atom+xml" title={SITE.name} href="/atom.xml" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
