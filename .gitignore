@@ -8,3 +8,4 @@ npm-debug.log*
 *~
 !public/apple-touch-icon.png
 !public/favicon-32x32.png
+!public/data/name-age/ssa-national-names.csv.gz
