@@ -11,12 +11,15 @@
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
-    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check"
+    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "data:update:baby-names": "node scripts/update-baby-names.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",
     "@astrojs/react": "^5.0.5",
+    "@duckdb/duckdb-wasm": "^1.33.1-dev45.0",
     "astro": "^6.3.5",
+    "fflate": "^0.8.3",
     "katex": "^0.16.47",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

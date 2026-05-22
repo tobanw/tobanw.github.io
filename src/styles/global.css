@@ -582,6 +582,285 @@ h3 {
   color: var(--ink);
 }
 
+.name-age-intro h1 {
+  max-width: none;
+}
+
+.name-age-app {
+  width: min(100%, 920px);
+  margin: 2rem 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--viz-bg);
+  box-shadow: var(--shadow);
+}
+
+.name-age-app-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.name-age-app-header h2 {
+  font-size: 1.25rem;
+}
+
+.name-age-app-header p {
+  max-width: 58ch;
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.name-age-app-header code {
+  flex: 0 0 auto;
+  padding: 0.3rem 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--paper);
+  color: var(--accent-2);
+  font-size: 0.82rem;
+}
+
+.name-age-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto auto;
+  gap: 0.85rem;
+  align-items: end;
+}
+
+.name-age-field,
+.name-age-sex {
+  min-width: 0;
+}
+
+.name-age-field span,
+.name-age-sex legend {
+  display: block;
+  margin: 0 0 0.35rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.name-age-field input {
+  width: 100%;
+  min-height: 2.45rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.name-age-field input:focus-visible,
+.name-age-sex label:focus-within,
+.name-age-submit:focus-visible,
+.name-age-bar:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.name-age-sex {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.name-age-sex div {
+  display: inline-flex;
+  min-height: 2.45rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+}
+
+.name-age-sex label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5rem;
+  padding: 0.45rem 0.7rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.name-age-sex label + label {
+  border-left: 1px solid var(--quiet);
+}
+
+.name-age-sex label.is-selected {
+  background: rgba(15, 118, 110, 0.11);
+  color: var(--ink);
+}
+
+.name-age-sex input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.name-age-submit {
+  min-height: 2.45rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.45rem 0.8rem;
+  background: var(--accent);
+  color: var(--paper);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+}
+
+.name-age-submit:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.name-age-status,
+.name-age-note,
+.name-age-plot-note {
+  margin: 0.85rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.name-age-plot-note {
+  max-width: 74ch;
+  line-height: 1.5;
+}
+
+.name-age-status-error,
+.name-age-status-no-data {
+  color: var(--accent-2);
+}
+
+.name-age-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.name-age-summary div {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--quiet);
+  border-radius: 6px;
+  background: var(--viz-stat-bg);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.name-age-summary dt {
+  color: var(--muted);
+}
+
+.name-age-summary dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+.name-age-chart {
+  margin: 1.1rem 0 0;
+}
+
+.name-age-chart figcaption {
+  margin-bottom: 0.75rem;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 720;
+}
+
+.name-age-chart-wrap {
+  position: relative;
+}
+
+.name-age-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.name-age-axis {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+.name-age-grid {
+  stroke: var(--viz-grid);
+  stroke-width: 1;
+}
+
+.name-age-label {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.name-age-bar {
+  fill: rgba(15, 118, 110, 0.62);
+  rx: 1.5px;
+}
+
+.name-age-bar:hover,
+.name-age-bar.is-active {
+  fill: var(--accent-2);
+}
+
+.name-age-popularity-bar {
+  fill: rgba(164, 63, 47, 0.58);
+}
+
+.name-age-popularity-bar:hover,
+.name-age-popularity-bar.is-active {
+  fill: var(--accent);
+}
+
+.name-age-tooltip {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  min-width: 10.5rem;
+  gap: 0.1rem;
+  transform: translate(-50%, calc(-100% - 0.55rem));
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+.name-age-tooltip span {
+  color: var(--muted);
+}
+
+.name-age-method {
+  margin-top: 2.5rem;
+}
+
+.math-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.math-inline {
+  white-space: nowrap;
+}
+
 .back-link {
   color: var(--accent);
 }
@@ -811,6 +1090,38 @@ h3 {
 
   .viz-header code {
     width: fit-content;
+  }
+
+  .name-age-app {
+    padding: 0.8rem;
+  }
+
+  .name-age-app-header,
+  .name-age-form {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .name-age-app-header code {
+    width: fit-content;
+  }
+
+  .name-age-sex div {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .name-age-sex label {
+    min-width: 0;
+  }
+
+  .name-age-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .name-age-tooltip {
+    display: none;
   }
 
   .keyboard-trigger span {

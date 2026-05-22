@@ -34,7 +34,7 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     summary: z.string(),
-    url: z.url().optional(),
+    url: z.union([z.url(), z.string().regex(/^\/\S*$/)]).optional(),
     repo: z.url().optional(),
     year: z.number().optional(),
     tags: z.array(z.string()).optional(),

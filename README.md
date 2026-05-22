@@ -18,6 +18,14 @@ npm run check
 npm run build
 ```
 
+## Data snapshots
+
+```sh
+npm run data:update:baby-names
+```
+
+Refreshes the bundled SSA baby names snapshot used by `/projects/name-analytics/`.
+
 ## Content
 
 - Long-form essays live in `src/content/writing`.
