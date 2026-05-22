@@ -1,0 +1,10 @@
+{
+  "sourceUrl": "https://www.ssa.gov/oact/babynames/names.zip",
+  "sourceDatasetUrl": "https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-data",
+  "downloadedFrom": "https://github.com/MalinMorris/NameData/archive/refs/heads/main.zip",
+  "generatedAt": "2026-05-21T21:50:23.470Z",
+  "minBirthYear": 1880,
+  "maxBirthYear": 2025,
+  "rowCount": 2181032,
+  "totalCount": 375362447
+}

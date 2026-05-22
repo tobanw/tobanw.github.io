@@ -1,0 +1,88 @@
+---
+import NameAgeDistribution from "@components/viz/NameAgeDistribution";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import katex from "katex";
+
+const derivation = String.raw`
+\begin{aligned}
+P(Y = y \mid N = n)
+  &= \frac{P(N = n \mid Y = y)P(Y = y)}
+          {\sum_t P(N = n \mid Y = t)P(Y = t)} \\
+  &= \frac{P(N = n, Y = y)}
+          {\sum_t P(N = n, Y = t)} \\
+  &\approx \frac{C_{n,y} / C_{\cdot,\cdot}}
+          {\sum_t C_{n,t} / C_{\cdot,\cdot}} \\
+  &= \frac{C_{n,y}}{\sum_t C_{n,t}}.
+\end{aligned}
+`;
+
+const derivationHtml = katex.renderToString(derivation, {
+  displayMode: true,
+  strict: false,
+  throwOnError: false
+});
+---
+
+<BaseLayout
+  title="What's in a Name?"
+  description="Estimate a birth-year distribution for a first name using Social Security baby names data."
+>
+  <section class="page-intro name-age-intro">
+    <p class="eyebrow">/projects/name-analytics</p>
+    <h1>What's in a Name?</h1>
+    <p>
+      Type a first name, choose female or male, and estimate the probability
+      mass over birth years using the Social Security national baby names data.
+    </p>
+  </section>
+
+  <NameAgeDistribution client:idle />
+
+  <section class="prose name-age-method" aria-labelledby="method-title">
+    <h2 id="method-title">How it works</h2>
+    <p>
+      The Social Security Administration publishes national baby-name counts by
+      first name, sex, and birth year. For a selected name and sex, this app
+      filters the data to those records and normalizes the counts across birth
+      years.
+    </p>
+    <p>
+      The calculation is done separately after choosing female or male. Holding
+      sex fixed without loss of generality, write <span class="math-inline">Y</span>
+      for birth year, <span class="math-inline">N</span> for first name, and
+      <span class="math-inline">C<sub>n,y</sub></span> for the SSA count for
+      name <span class="math-inline">n</span> and year <span class="math-inline">y</span>.
+      Bayes rule gives:
+    </p>
+    <div class="math-display name-age-derivation" set:html={derivationHtml} />
+    <p>
+      The joint probabilities are estimated by the corresponding SSA name-year
+      count divided by the total count in the fixed-sex data. That common
+      denominator cancels, so the app only needs the selected name's counts by
+      year.
+    </p>
+    <p>
+      The chart is therefore a birth-cohort distribution. It is not adjusted for
+      mortality, immigration, or emigration, so it should not be read as the
+      exact age distribution of living people with that name today.
+    </p>
+    <p>
+      The popularity chart uses a birth-weighted percentile. In a given year,
+      a percentile of 75% means that 75% of babies in the selected sex group had
+      names that were as rare or rarer, while 25% had more common names. This is
+      weighted by births rather than by distinct name labels, so very rare names
+      do not dominate the scale.
+    </p>
+    <p>
+      SSA suppresses low-count records for privacy. Names with fewer than five
+      births in a year/sex cell can be missing, and very rare names may have no
+      usable data.
+    </p>
+    <p>
+      Source:
+      <a href="https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-data">
+        Baby Names from Social Security Card Applications - National Data
+      </a>.
+    </p>
+  </section>
+</BaseLayout>
