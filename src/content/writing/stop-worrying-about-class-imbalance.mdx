@@ -1,0 +1,85 @@
+---
+title: "Stop worrying about class imbalance"
+date: "2026-05-22 12:00:00"
+description: "Data scientists worry too much about class imbalance in classifier training sets. If you care about calibrated probabilities, log loss already handles the imbalance correctly."
+math: true
+---
+
+import ClassImbalanceSimulation from "@components/viz/ClassImbalanceSimulation";
+
+Data scientists worry too much about class imbalance.
+
+The standard example is something like fraud detection: suppose only 1% of transactions are fraudulent.
+People see the 99/1 split and immediately reach for over-sampling, under-sampling, SMOTE, class weights, or some other intervention to "fix" the training set.
+But in many cases there is nothing to fix.
+The imbalance is not a bug in the data.
+It is a fact about the world that the model is supposed to learn.
+
+This is especially true if the classifier is meant to produce probabilities.
+If the true probability of fraud is usually small, then a good model should usually predict small probabilities.
+That is not a failure mode.
+That is the correct answer.
+
+The loss function matters here.
+For a binary classifier that predicts $p_i = Pr[y_i = 1 \mid x_i]$, the negative log-likelihood, aka log loss, is
+
+$$
+-\sum_i \left[y_i \log(p_i) + (1-y_i)\log(1-p_i)\right].
+$$
+
+This loss already accounts for both classes.
+A positive example contributes $-\log(p_i)$; a negative example contributes $-\log(1-p_i)$.
+If positives are rare, there are fewer positive terms in the sum because positives really are rare.
+The maximum likelihood estimate is trying to fit the conditional probability distribution in the population you sampled from.
+It is not secretly confused by the fact that one class occurs more often than the other.
+
+In fact, the imbalance is often exactly what determines the intercept, or more generally the baseline probability.
+If you train a logistic regression model on representative data where positives occur 1% of the time, the model has to learn that the base rate is around 1%.
+If you over-sample the positives until the training data is 50/50, you have told the model a different story about the world.
+Unless you correct for that later, the predicted probabilities will be too high.
+
+This is the main point that gets lost in the usual discussion: resampling changes the objective.
+Over-sampling the minority class is equivalent to giving those examples extra weight.
+Under-sampling the majority class is equivalent to throwing away information from the common class.
+Both can be useful if you deliberately want a different objective, but they are not neutral preprocessing steps.
+They change what the model is optimizing.
+
+Here is a simulated logistic regression example.
+The model is well-specified and the test set has the real base rate.
+Changing the positive-class weight mostly shifts the log-odds, so the ranking survives while the probabilities get worse.
+The calibration plot compares mean predicted probability on the x-axis with the observed positive rate on the y-axis; the dashed diagonal is where predictions match reality:
+
+<ClassImbalanceSimulation client:idle />
+
+This matters because log loss is a proper scoring rule.
+In plain English, that means the loss is minimized by telling the truth: if the conditional probability is 0.03, the best prediction under log loss is 0.03.
+But if you train on an artificially balanced dataset, the empirical distribution no longer has the same base rate as the real distribution.
+The model may still learn a ranking that is useful for discrimination, but its raw probabilities will generally be miscalibrated.
+And calibration is exactly what you want if the downstream decision depends on expected value, risk, or any comparison of probabilities.
+
+There are reasonable caveats.
+If the rare class is extremely rare, you may not have enough examples to learn much about it.
+That is a sample size problem, not a class imbalance problem.
+The solution is usually more data, better features, pooling across related cases, or stronger regularization.
+Also, if your optimization procedure struggles because mini-batches rarely contain positives, there may be engineering tricks that help training.
+But those tricks should be understood as optimization aids, not as corrections to the statistical target.
+
+Similarly, if your goal is not calibrated probabilities but a specific decision rule, then asymmetric costs may justify a weighted loss.
+For example, missing a fraud case may be much worse than annoying a customer with a review.
+But then the class weights should come from the costs of the decision problem, not from the class frequencies themselves.
+The fact that fraud is rare does not automatically imply that fraudulent examples deserve 99 times the weight.
+
+The clean separation is:
+
+1. Use log loss if you want calibrated probabilities.
+2. Choose a threshold using the costs and benefits of action.
+3. Evaluate calibration and decision quality on data with the real base rate.
+
+The common mistake is to mix these steps together.
+People see an imbalanced training set, modify it to make the classes look balanced, train a classifier, and then wonder why the predicted probabilities are off.
+But the probabilities are off because the model was trained on a distorted version of reality.
+
+Class imbalance can be a warning sign that you need more data or that naive accuracy will be a useless metric.
+It is not, by itself, a reason to resample the training set.
+If the training set is representative and the model is trained with log loss, the imbalance is already part of the likelihood.
+Treat it as signal, not contamination.
