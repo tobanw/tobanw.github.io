@@ -6,7 +6,10 @@ import remarkMath from "remark-math";
 
 export default defineConfig({
   site: "https://tobanwiebe.com",
-  trailingSlash: "always",
+  trailingSlash: "ignore",
+  redirects: {
+    "/names": "/projects/name-analytics/"
+  },
   integrations: [mdx(), react()],
   markdown: {
     remarkPlugins: [remarkMath],
