@@ -54,6 +54,10 @@ const canonicalUrl = new URL(canonical ?? Astro.url.pathname, SITE.url).toString
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
   </head>
   <body class={bodyClass}>
     <a class="skip-link" href="#main">Skip to content</a>
