@@ -71,16 +71,21 @@ const recentBits = bits.slice(0, 4).map(bitToListItem);
 
     <div class="grid">
       {
-        projects.map((project) => (
-          <article class="project-card">
-            <h3>{project.data.title}</h3>
-            <p>{project.data.summary}</p>
-            <div class="project-actions">
-              {project.data.url && <a href={project.data.url}>open</a>}
-              {project.data.repo && <a href={project.data.repo}>source</a>}
-            </div>
-          </article>
-        ))
+        projects.map((project) => {
+          const projectHref = project.data.url ?? project.data.repo;
+          return (
+            <article class="project-card">
+              <h3>
+                {projectHref ? <a href={projectHref}>{project.data.title}</a> : project.data.title}
+              </h3>
+              <p>{project.data.summary}</p>
+              <div class="project-actions">
+                {project.data.url && <a href={project.data.url}>open</a>}
+                {project.data.repo && <a href={project.data.repo}>source</a>}
+              </div>
+            </article>
+          );
+        })
       }
     </div>
   </section>

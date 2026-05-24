@@ -17,24 +17,29 @@ const projects = await getAllProjects();
 
   <div class="grid">
     {
-      projects.map((project) => (
-        <article class="project-card">
-          <p class="project-meta">{project.data.year ?? "now"}</p>
-          <h2>{project.data.title}</h2>
-          <p>{project.data.summary}</p>
-          {project.data.tags && (
-            <div class="tag-row" aria-label="Tags">
-              {project.data.tags.map((tag) => (
-                <span class="tag">{tag}</span>
-              ))}
+      projects.map((project) => {
+        const projectHref = project.data.url ?? project.data.repo;
+        return (
+          <article class="project-card">
+            <p class="project-meta">{project.data.year ?? "now"}</p>
+            <h2>
+              {projectHref ? <a href={projectHref}>{project.data.title}</a> : project.data.title}
+            </h2>
+            <p>{project.data.summary}</p>
+            {project.data.tags && (
+              <div class="tag-row" aria-label="Tags">
+                {project.data.tags.map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            )}
+            <div class="project-actions">
+              {project.data.url && <a href={project.data.url}>open</a>}
+              {project.data.repo && <a href={project.data.repo}>source</a>}
             </div>
-          )}
-          <div class="project-actions">
-            {project.data.url && <a href={project.data.url}>open</a>}
-            {project.data.repo && <a href={project.data.repo}>source</a>}
-          </div>
-        </article>
-      ))
+          </article>
+        );
+      })
     }
   </div>
 </BaseLayout>
