@@ -8,6 +8,10 @@ import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type J
 const DATA_FILE = "/data/name-age/ssa-national-names.csv.gz";
 const META_FILE = "/data/name-age/ssa-national-names.meta.json";
 const CURRENT_YEAR = new Date().getFullYear();
+const SHARE_APP_PATH = "/names";
+const SHARE_APP_URL = "https://tobanwiebe.com/names/";
+const SHARE_APP_CTA = "Try your name at tobanwiebe.com/names";
+const SHARE_APP_LABEL = "tobanwiebe.com/names";
 
 const WIDTH = 920;
 const HEIGHT = 390;
@@ -82,6 +86,10 @@ interface QueryResult {
 interface ShareDetails {
   text: string;
   url: string;
+  appUrl: string;
+  appPath: string;
+  cta: string;
+  appLabel: string;
   filename: string;
   resultLabel: string;
   resultName: string;
@@ -747,6 +755,9 @@ export default function NameAgeDistribution(): JSX.Element {
                 </a>{" "}
                 {result.meta.minBirthYear}-{result.meta.maxBirthYear} (USA).
               </p>
+              <p className="name-age-share-cta">
+                Try your name at <a href={share.appPath}>{share.appLabel}</a>
+              </p>
             </div>
 
             <div className="name-age-share-actions" aria-label="Share result">
@@ -804,6 +815,10 @@ function makeShareDetails(result: QueryResult, range: ShareRange): ShareDetails 
   return {
     text,
     url,
+    appUrl: SHARE_APP_URL,
+    appPath: SHARE_APP_PATH,
+    cta: SHARE_APP_CTA,
+    appLabel: SHARE_APP_LABEL,
     filename: `${fileNameParts.join("-")}.png`,
     resultLabel,
     resultName: result.name,
@@ -874,7 +889,7 @@ async function copySharePayload(share: ShareDetails) {
 }
 
 function formatSharePayload(share: ShareDetails) {
-  return `${share.text}\n\n${share.url}`;
+  return `${share.text}\n\nTry your name at ${share.appUrl}\nView this result: ${share.url}`;
 }
 
 async function makeShareImageFile(
@@ -955,7 +970,11 @@ async function renderShareImage(
 
   ctx.fillStyle = theme.muted;
   ctx.font = "16px ui-monospace, SFMono-Regular, Menlo, monospace";
-  fitText(ctx, share.source, innerX, cardY + cardHeight - 38, innerWidth);
+  fitText(ctx, share.source, innerX, cardY + cardHeight - 58, innerWidth);
+
+  ctx.fillStyle = theme.accent;
+  ctx.font = "800 22px ui-monospace, SFMono-Regular, Menlo, monospace";
+  fitText(ctx, share.cta, innerX, cardY + cardHeight - 26, innerWidth);
 
   return await new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
@@ -1248,12 +1267,16 @@ function drawPopularityStatRow(
   ink: string,
   muted: string
 ) {
+  const valueFont = "800 19px ui-monospace, SFMono-Regular, Menlo, monospace";
+
   ctx.fillStyle = muted;
-  const valueWidth = measureStatValueWidth(ctx, value, 19, 11);
+  ctx.font = valueFont;
+  const valueWidth = ctx.measureText(value).width;
   ctx.font = "650 18px ui-monospace, SFMono-Regular, Menlo, monospace";
   fitText(ctx, label, x, y, Math.max(48, width - valueWidth - 22));
   ctx.fillStyle = ink;
-  drawStatValue(ctx, value, x + width, y, ink, 19, 11);
+  ctx.font = valueFont;
+  ctx.fillText(value, x + width - valueWidth, y);
 }
 
 function drawYearStatRow(
@@ -1272,56 +1295,6 @@ function drawYearStatRow(
   ctx.fillStyle = ink;
   ctx.font = "760 18px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
   ctx.fillText(value, x + width - ctx.measureText(value).width, y);
-}
-
-function measureStatValueWidth(
-  ctx: CanvasRenderingContext2D,
-  value: string,
-  valueSize = 25,
-  suffixSize = 15
-) {
-  const match = value.match(/^(.+?)(th)$/);
-  if (!match) {
-    ctx.font = `800 ${valueSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif`;
-    return ctx.measureText(value).width;
-  }
-
-  ctx.font = `800 ${valueSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif`;
-  const numberWidth = ctx.measureText(match[1]).width;
-  ctx.font = `600 ${suffixSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif`;
-  return numberWidth + ctx.measureText(match[2]).width;
-}
-
-function drawStatValue(
-  ctx: CanvasRenderingContext2D,
-  value: string,
-  right: number,
-  y: number,
-  ink: string,
-  valueSize = 25,
-  suffixSize = 15
-) {
-  const match = value.match(/^(.+?)(th)$/);
-  if (!match) {
-    ctx.fillStyle = ink;
-    ctx.font = `800 ${valueSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif`;
-    ctx.fillText(value, right - ctx.measureText(value).width, y);
-    return;
-  }
-
-  const number = match[1];
-  const suffix = match[2];
-  ctx.font = `800 ${valueSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif`;
-  const numberWidth = ctx.measureText(number).width;
-  ctx.font = `600 ${suffixSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif`;
-  const suffixWidth = ctx.measureText(suffix).width;
-  const start = right - numberWidth - suffixWidth;
-
-  ctx.fillStyle = ink;
-  ctx.font = `800 ${valueSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif`;
-  ctx.fillText(number, start, y);
-  ctx.font = `600 ${suffixSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif`;
-  ctx.fillText(suffix, start + numberWidth, y - Math.round(valueSize * 0.32));
 }
 
 function drawRoundedRect(
