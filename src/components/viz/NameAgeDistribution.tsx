@@ -110,6 +110,16 @@ interface DuckState {
 
 let duckStatePromise: Promise<DuckState> | null = null;
 
+function LoadingDots(): JSX.Element {
+  return (
+    <span className="name-age-loading-dots" aria-hidden="true">
+      <span>.</span>
+      <span>.</span>
+      <span>.</span>
+    </span>
+  );
+}
+
 export default function NameAgeDistribution(): JSX.Element {
   const nameInputId = useId();
   const statusId = useId();
@@ -238,7 +248,7 @@ export default function NameAgeDistribution(): JSX.Element {
     setStatus("loading");
     setActiveBar(null);
     setActivePopularity(null);
-    setMessage("Loading the SSA dataset into DuckDB.");
+    setMessage("Loading the SSA dataset into DuckDB");
 
     try {
       const state = await getDuckState();
@@ -401,12 +411,20 @@ export default function NameAgeDistribution(): JSX.Element {
         </fieldset>
 
         <button className="name-age-submit" type="submit" disabled={status === "loading"}>
-          {status === "loading" ? "loading" : "estimate"}
+          {status === "loading" ? (
+            <>
+              loading
+              <LoadingDots />
+            </>
+          ) : (
+            "estimate"
+          )}
         </button>
       </form>
 
       <p className={`name-age-status name-age-status-${status}`} id={statusId} role="status">
         {message}
+        {status === "loading" && <LoadingDots />}
       </p>
 
       {status === "no-data" && (

@@ -938,6 +938,58 @@ h3 {
   font-size: 0.92rem;
 }
 
+.name-age-status-loading {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.name-age-loading-dots {
+  display: inline-flex;
+  width: 1.4em;
+  margin-left: 0.1em;
+  color: var(--accent);
+  font-weight: 800;
+  vertical-align: baseline;
+}
+
+.name-age-submit .name-age-loading-dots {
+  color: currentColor;
+}
+
+.name-age-loading-dots span {
+  opacity: 0.24;
+  animation: name-age-loading-dot 1.05s ease-in-out infinite;
+}
+
+.name-age-loading-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.name-age-loading-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes name-age-loading-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.24;
+    transform: translateY(0);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-0.08em);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .name-age-loading-dots span {
+    opacity: 1;
+    animation: none;
+  }
+}
+
 .name-age-plot-note {
   margin: 1rem 0 1.35rem clamp(2.2rem, 6.3%, 3.65rem);
   max-width: min(74ch, calc(100% - clamp(2.2rem, 6.3%, 3.65rem)));
@@ -1187,18 +1239,22 @@ h3 {
   align-items: baseline;
   justify-content: space-between;
   gap: 0.75rem;
+  min-width: 0;
 }
 
 .name-age-share-metric-list > span > span {
+  min-width: 0;
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 520;
 }
 
 .name-age-share-metric-list strong {
+  flex: 0 0 auto;
   color: var(--ink);
   font-size: 0.92rem;
   font-weight: 760;
+  white-space: nowrap;
 }
 
 .name-age-percentile-suffix {
