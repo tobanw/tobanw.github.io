@@ -38,8 +38,41 @@ const derivationHtml = katex.renderToString(derivation, {
 
   <NameAgeDistribution client:idle />
 
+  <section class="prose name-age-method" aria-label="What it answers">
+    <p>
+      In plain English, it answers two questions: is this name mostly old, new,
+      making a comeback, or going out of style? And how popular is it compared
+      with other names in any given birth year?
+    </p>
+    <p>
+      Two handy use-cases. First, if you get an email, resume, or other note
+      from someone, it can give you a sense of their likely age based on their
+      first name. For example,
+      <a href="/projects/name-analytics/?name=Harold&sex=M">Harold</a> reads
+      older and <a href="/projects/name-analytics/?name=Logan&sex=M">Logan</a>
+      reads younger. Second, if you're hunting for baby names, it helps separate
+      names that are on the rise from names that are already hot, declining, or
+      outdated. For example,
+      <a href="/projects/name-analytics/?name=Wells&sex=M">Wells</a> is on the
+      rise; <a href="/projects/name-analytics/?name=Harvey&sex=M">Harvey</a> is
+      an old name making a comeback;
+      <a href="/projects/name-analytics/?name=Aiden&sex=M">Aiden</a> was hot
+      but has peaked and is going out of style, much like
+      <a href="/projects/name-analytics/?name=Cody&sex=M">Cody</a> peaked in
+      the early 90s.
+    </p>
+  </section>
+
   <section class="prose name-age-method" aria-labelledby="method-title">
     <h2 id="method-title">How it works</h2>
+    <p>
+      Intuitively, the birth-year chart tells the age story of a name. A name
+      concentrated far in the past reads older; one concentrated recently reads
+      newer; one with both an older wave and a newer rise is making a comeback;
+      and one with a recent peak that is fading is going out of style. The
+      popularity chart tells a different story: how common the name was compared
+      with other names given in the same years.
+    </p>
     <p>
       The Social Security Administration publishes national baby-name counts by
       first name, sex, and birth year. For a selected name and sex, this app
@@ -79,10 +112,18 @@ const derivationHtml = katex.renderToString(derivation, {
       usable data.
     </p>
     <p>
-      Data source:
-      <a href="https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-data">
-        Baby Names from Social Security Card Applications - National Data
-      </a>.
+      Tech note: the app runs entirely client-side. It downloads a compressed
+      SSA CSV, loads it into DuckDB-Wasm in a web worker, and runs the estimates
+      in your browser, so there is no server-side database or API behind the
+      tool.
+    </p>
+    <p>
+      <small>
+        Data source:
+        <a href="https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-data">
+          Baby Names from Social Security Card Applications - National Data
+        </a>.
+      </small>
     </p>
   </section>
 </BaseLayout>
