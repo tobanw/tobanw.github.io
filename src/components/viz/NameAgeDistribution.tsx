@@ -3,10 +3,15 @@ import duckdbEhWasm from "@duckdb/duckdb-wasm/dist/duckdb-eh.wasm?url";
 import duckdbEhWorker from "@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js?url";
 import duckdbMvpWasm from "@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm?url";
 import duckdbMvpWorker from "@duckdb/duckdb-wasm/dist/duckdb-browser-mvp.worker.js?url";
+import { gunzipSync, strFromU8 } from "fflate";
 import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type JSX } from "react";
 
 const DATA_FILE = "/data/name-age/ssa-national-names.csv.gz";
 const META_FILE = "/data/name-age/ssa-national-names.meta.json";
+const NAME_INDEX_CACHE_DB = "name-age-index-cache";
+const NAME_INDEX_CACHE_STORE = "indexes";
+const NAME_INDEX_CACHE_KEY = "name-age-ssa-v1";
+const CACHE_SCHEMA_VERSION = 1;
 const CURRENT_YEAR = new Date().getFullYear();
 const SHARE_APP_PATH = "/names";
 const SHARE_APP_URL = "https://tobanwiebe.com/names/";
@@ -31,9 +36,18 @@ const MANUAL_BUNDLES: duckdb.DuckDBBundles = {
   }
 };
 
+const NAME_AGE_CACHE_TABLES = [
+  "names",
+  "overall_name_popularity",
+  "yearly_name_popularity",
+  "recent_name_popularity",
+  "name_age_cache_meta"
+] as const;
+
 type Sex = "F" | "M";
 type Status = "idle" | "loading" | "ready" | "no-data" | "error";
 type ShareRangeStatus = "idle" | "loading" | "ready" | "error";
+type DataStorage = "indexeddb" | "duckdb-memory";
 
 interface DataMeta {
   sourceUrl: string;
@@ -110,13 +124,80 @@ interface ShareRange {
 }
 
 interface DuckState {
+  kind: "duckdb";
   conn: duckdb.AsyncDuckDBConnection;
   statement: duckdb.AsyncPreparedStatement;
   rangeStatement: duckdb.AsyncPreparedStatement;
   meta: DataMeta;
+  storage: DataStorage;
 }
 
-let duckStatePromise: Promise<DuckState> | null = null;
+interface NameIndexState {
+  kind: "index";
+  index: NameIndex;
+  meta: DataMeta;
+  storage: DataStorage;
+}
+
+type DataState = DuckState | NameIndexState;
+
+interface NameIndex {
+  meta: DataMeta;
+  minBirthYear: number;
+  maxBirthYear: number;
+  yearCount: number;
+  nameLcs: string[];
+  names: string[];
+  sexCodes: Uint8Array;
+  rowStarts: Uint32Array;
+  yearOffsets: Uint16Array;
+  counts: Uint32Array;
+  yearPercentiles: Float32Array;
+  totalBirths: Uint32Array;
+  recentBirths: Uint32Array;
+  overallPercentiles: Float32Array;
+  recentPercentiles: Float32Array;
+  overallBirthCounts: { F: number; M: number };
+  yearBirthCounts: { F: Uint32Array; M: Uint32Array };
+  recordByKey: Map<string, number>;
+  recordsBySex: { F: number[]; M: number[] };
+}
+
+interface CachedNameIndexRecord {
+  schemaVersion: number;
+  generatedAt: string;
+  minBirthYear: number;
+  maxBirthYear: number;
+  rowCount: number;
+  totalCount: number;
+  nameLcs: string[];
+  names: string[];
+  sexCodes: Uint8Array;
+  rowStarts: Uint32Array;
+  yearOffsets: Uint16Array;
+  counts: Uint32Array;
+  yearPercentiles: Float32Array;
+  totalBirths: Uint32Array;
+  recentBirths: Uint32Array;
+  overallPercentiles: Float32Array;
+  recentPercentiles: Float32Array;
+  overallBirthCountF: number;
+  overallBirthCountM: number;
+  yearBirthCountsF: Uint32Array;
+  yearBirthCountsM: Uint32Array;
+}
+
+interface MutableNameRecord {
+  nameLc: string;
+  name: string;
+  sex: Sex;
+  years: number[];
+  counts: number[];
+  totalBirths: number;
+  recentBirths: number;
+}
+
+let dataStatePromise: Promise<DataState> | null = null;
 
 function LoadingDots(): JSX.Element {
   return (
@@ -189,7 +270,7 @@ export default function NameAgeDistribution(): JSX.Element {
     const timeout = window.setTimeout(() => {
       void (async () => {
         try {
-          const state = await getDuckState();
+          const state = await getDataState();
           const percentile = await queryRangePercentile(
             state,
             result.normalizedName,
@@ -256,10 +337,10 @@ export default function NameAgeDistribution(): JSX.Element {
     setStatus("loading");
     setActiveBar(null);
     setActivePopularity(null);
-    setMessage("Loading the SSA dataset into DuckDB");
+    setMessage("Opening the name data");
 
     try {
-      const state = await getDuckState();
+      const state = await getDataState();
       const rows = await queryDistribution(state, normalizedName, selectedSex);
       if (rows.length === 0) {
         setResult(null);
@@ -1349,35 +1430,89 @@ function fitText(ctx: CanvasRenderingContext2D, text: string, x: number, y: numb
   ctx.fillText(`${truncated}...`, x, y);
 }
 
-async function getDuckState() {
-  duckStatePromise ??= initializeDuckState();
-  return duckStatePromise;
+async function getDataState() {
+  dataStatePromise ??= initializeDataState();
+  return dataStatePromise;
 }
 
-async function initializeDuckState(): Promise<DuckState> {
-  const [bundle, dataResponse, metaResponse] = await Promise.all([
+async function initializeDataState(): Promise<DataState> {
+  const [bundle, meta] = await Promise.all([
     duckdb.selectBundle(MANUAL_BUNDLES),
-    fetch(DATA_FILE),
-    fetch(META_FILE)
+    fetchDataMeta()
   ]);
 
-  if (!dataResponse.ok) {
-    throw new Error(`Could not fetch ${DATA_FILE}: ${dataResponse.status}`);
+  try {
+    return await initializeCachedNameIndexState(meta);
+  } catch (error) {
+    console.info("Name analytics indexed cache is unavailable; using in-memory DuckDB.", describeError(error), error);
+    return initializeMemoryDuckState(bundle, meta);
   }
-  if (!metaResponse.ok) {
-    throw new Error(`Could not fetch ${META_FILE}: ${metaResponse.status}`);
+}
+
+async function fetchDataMeta() {
+  const response = await fetch(META_FILE);
+  if (!response.ok) {
+    throw new Error(`Could not fetch ${META_FILE}: ${response.status}`);
+  }
+  return await response.json() as DataMeta;
+}
+
+async function initializeCachedNameIndexState(meta: DataMeta): Promise<NameIndexState> {
+  if (!hasIndexedDBSupport()) {
+    throw new Error("IndexedDB is unavailable in this browser context.");
   }
 
+  const cached = await readCachedNameIndexRecord(meta);
+  if (cached) {
+    return {
+      kind: "index",
+      index: hydrateNameIndex(cached, meta),
+      meta,
+      storage: "indexeddb"
+    };
+  }
+
+  const index = await buildNameIndexFromDataset(meta);
+  await writeCachedNameIndexRecord(index);
+  return {
+    kind: "index",
+    index,
+    meta,
+    storage: "indexeddb"
+  };
+}
+
+async function initializeMemoryDuckState(bundle: duckdb.DuckDBBundle, meta: DataMeta): Promise<DuckState> {
+  const db = await createDuckDB(bundle);
+  const conn = await db.connect();
+  await rebuildNameAgeDatabase(db, conn, meta);
+  return prepareDuckState(conn, meta, "duckdb-memory");
+}
+
+async function createDuckDB(bundle: duckdb.DuckDBBundle) {
   const worker = new Worker(bundle.mainWorker!);
   const db = new duckdb.AsyncDuckDB(new duckdb.VoidLogger(), worker);
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+  return db;
+}
+
+async function rebuildNameAgeDatabase(
+  db: duckdb.AsyncDuckDB,
+  conn: duckdb.AsyncDuckDBConnection,
+  meta: DataMeta
+) {
+  const dataResponse = await fetch(DATA_FILE);
+  if (!dataResponse.ok) {
+    throw new Error(`Could not fetch ${DATA_FILE}: ${dataResponse.status}`);
+  }
+
+  await dropNameAgeTables(conn);
+
   const dataBytes = new Uint8Array(await dataResponse.arrayBuffer());
   const duckdbFile = isGzip(dataBytes) ? "ssa-national-names.csv.gz" : "ssa-national-names.csv";
-  const meta = await metaResponse.json() as DataMeta;
   const recentStartYear = meta.maxBirthYear - 9;
   await db.registerFileBuffer(duckdbFile, dataBytes);
 
-  const conn = await db.connect();
   await conn.query(`
     CREATE TABLE names AS
       SELECT name_lc, name, sex, birth_year, "count"
@@ -1481,6 +1616,31 @@ async function initializeDuckState(): Promise<DuckState> {
       FROM ranked;
   `);
 
+  await conn.query(`
+    CREATE TABLE name_age_cache_meta AS
+      SELECT
+        ${CACHE_SCHEMA_VERSION}::INTEGER AS schema_version,
+        ${sqlString(meta.generatedAt)}::VARCHAR AS generated_at,
+        ${meta.minBirthYear}::INTEGER AS min_birth_year,
+        ${meta.maxBirthYear}::INTEGER AS max_birth_year,
+        ${meta.rowCount}::INTEGER AS row_count,
+        ${meta.totalCount}::UBIGINT AS total_count;
+  `);
+
+  await db.dropFile(duckdbFile).catch(() => undefined);
+}
+
+async function dropNameAgeTables(conn: duckdb.AsyncDuckDBConnection) {
+  for (const tableName of [...NAME_AGE_CACHE_TABLES].reverse()) {
+    await conn.query(`DROP TABLE IF EXISTS ${tableName};`);
+  }
+}
+
+async function prepareDuckState(
+  conn: duckdb.AsyncDuckDBConnection,
+  meta: DataMeta,
+  storage: DataStorage
+): Promise<DuckState> {
   const statement = await conn.prepare(`
     WITH selected AS (
       SELECT birth_year, sex, name_lc, SUM("count") AS births
@@ -1541,14 +1701,362 @@ async function initializeDuckState(): Promise<DuckState> {
   `);
 
   return {
+    kind: "duckdb",
     conn,
     statement,
     rangeStatement,
-    meta
+    meta,
+    storage
   };
 }
 
-async function queryDistribution(state: DuckState, normalizedName: string, sex: Sex): Promise<QueryDatum[]> {
+function hasIndexedDBSupport() {
+  return typeof indexedDB !== "undefined";
+}
+
+async function readCachedNameIndexRecord(meta: DataMeta) {
+  const db = await openNameIndexCache();
+  try {
+    const transaction = db.transaction(NAME_INDEX_CACHE_STORE, "readonly");
+    const record = await idbRequest<CachedNameIndexRecord | undefined>(
+      transaction.objectStore(NAME_INDEX_CACHE_STORE).get(NAME_INDEX_CACHE_KEY)
+    );
+    if (!record || !cachedNameIndexRecordMatches(record, meta)) return null;
+    return record;
+  } finally {
+    db.close();
+  }
+}
+
+async function writeCachedNameIndexRecord(index: NameIndex) {
+  const db = await openNameIndexCache();
+  try {
+    const transaction = db.transaction(NAME_INDEX_CACHE_STORE, "readwrite");
+    transaction.objectStore(NAME_INDEX_CACHE_STORE).put({
+      schemaVersion: CACHE_SCHEMA_VERSION,
+      generatedAt: index.meta.generatedAt,
+      minBirthYear: index.meta.minBirthYear,
+      maxBirthYear: index.meta.maxBirthYear,
+      rowCount: index.meta.rowCount,
+      totalCount: index.meta.totalCount,
+      nameLcs: index.nameLcs,
+      names: index.names,
+      sexCodes: index.sexCodes,
+      rowStarts: index.rowStarts,
+      yearOffsets: index.yearOffsets,
+      counts: index.counts,
+      yearPercentiles: index.yearPercentiles,
+      totalBirths: index.totalBirths,
+      recentBirths: index.recentBirths,
+      overallPercentiles: index.overallPercentiles,
+      recentPercentiles: index.recentPercentiles,
+      overallBirthCountF: index.overallBirthCounts.F,
+      overallBirthCountM: index.overallBirthCounts.M,
+      yearBirthCountsF: index.yearBirthCounts.F,
+      yearBirthCountsM: index.yearBirthCounts.M
+    } satisfies CachedNameIndexRecord, NAME_INDEX_CACHE_KEY);
+    await idbTransactionDone(transaction);
+  } finally {
+    db.close();
+  }
+}
+
+function cachedNameIndexRecordMatches(record: CachedNameIndexRecord, meta: DataMeta) {
+  return (
+    record.schemaVersion === CACHE_SCHEMA_VERSION &&
+    record.generatedAt === meta.generatedAt &&
+    record.minBirthYear === meta.minBirthYear &&
+    record.maxBirthYear === meta.maxBirthYear &&
+    record.rowCount === meta.rowCount &&
+    record.totalCount === meta.totalCount &&
+    record.nameLcs.length > 0 &&
+    record.rowStarts.length === record.nameLcs.length + 1 &&
+    record.counts.length === record.rowCount &&
+    record.yearOffsets.length === record.rowCount &&
+    record.yearPercentiles.length === record.rowCount
+  );
+}
+
+function openNameIndexCache() {
+  return new Promise<IDBDatabase>((resolve, reject) => {
+    const request = indexedDB.open(NAME_INDEX_CACHE_DB, 1);
+    request.onupgradeneeded = () => {
+      request.result.createObjectStore(NAME_INDEX_CACHE_STORE);
+    };
+    request.onerror = () => reject(request.error ?? new Error("Could not open name index cache."));
+    request.onsuccess = () => resolve(request.result);
+  });
+}
+
+function idbRequest<T>(request: IDBRequest<T>) {
+  return new Promise<T>((resolve, reject) => {
+    request.onerror = () => reject(request.error ?? new Error("IndexedDB request failed."));
+    request.onsuccess = () => resolve(request.result);
+  });
+}
+
+function idbTransactionDone(transaction: IDBTransaction) {
+  return new Promise<void>((resolve, reject) => {
+    transaction.onabort = () => reject(transaction.error ?? new Error("IndexedDB transaction aborted."));
+    transaction.onerror = () => reject(transaction.error ?? new Error("IndexedDB transaction failed."));
+    transaction.oncomplete = () => resolve();
+  });
+}
+
+async function buildNameIndexFromDataset(meta: DataMeta) {
+  const response = await fetch(DATA_FILE);
+  if (!response.ok) {
+    throw new Error(`Could not fetch ${DATA_FILE}: ${response.status}`);
+  }
+  const dataBytes = new Uint8Array(await response.arrayBuffer());
+  const csv = isGzip(dataBytes) ? strFromU8(gunzipSync(dataBytes)) : strFromU8(dataBytes);
+  return buildNameIndexFromCsv(csv, meta);
+}
+
+function buildNameIndexFromCsv(csv: string, meta: DataMeta): NameIndex {
+  const minYear = meta.minBirthYear;
+  const yearCount = meta.maxBirthYear - meta.minBirthYear + 1;
+  const recentStartYear = meta.maxBirthYear - 9;
+  const mutableRecords: MutableNameRecord[] = [];
+  const yearBirthCounts = {
+    F: new Uint32Array(yearCount),
+    M: new Uint32Array(yearCount)
+  };
+
+  let lineStart = csv.indexOf("\n") + 1;
+  let current: MutableNameRecord | null = null;
+  while (lineStart > 0 && lineStart < csv.length) {
+    let lineEnd = csv.indexOf("\n", lineStart);
+    if (lineEnd === -1) lineEnd = csv.length;
+    if (lineEnd > lineStart && csv.charCodeAt(lineEnd - 1) === 13) lineEnd -= 1;
+    if (lineEnd > lineStart) {
+      const firstComma = csv.indexOf(",", lineStart);
+      const secondComma = csv.indexOf(",", firstComma + 1);
+      const thirdComma = csv.indexOf(",", secondComma + 1);
+      const fourthComma = csv.indexOf(",", thirdComma + 1);
+      const nameLc = csv.slice(lineStart, firstComma);
+      const name = csv.slice(firstComma + 1, secondComma);
+      const sex = csv.slice(secondComma + 1, thirdComma) as Sex;
+      const birthYear = Number(csv.slice(thirdComma + 1, fourthComma));
+      const count = Number(csv.slice(fourthComma + 1, lineEnd));
+      const yearOffset = birthYear - minYear;
+
+      if (!current || current.nameLc !== nameLc || current.sex !== sex) {
+        current = { nameLc, name, sex, years: [], counts: [], totalBirths: 0, recentBirths: 0 };
+        mutableRecords.push(current);
+      }
+
+      current.years.push(yearOffset);
+      current.counts.push(count);
+      current.totalBirths += count;
+      if (birthYear >= recentStartYear) current.recentBirths += count;
+      yearBirthCounts[sex][yearOffset] += count;
+    }
+    lineStart = lineEnd + 1;
+  }
+
+  return flattenNameRecords(mutableRecords, yearBirthCounts, meta);
+}
+
+function flattenNameRecords(
+  records: MutableNameRecord[],
+  yearBirthCounts: { F: Uint32Array; M: Uint32Array },
+  meta: DataMeta
+): NameIndex {
+  const rowCount = records.reduce((sum, record) => sum + record.counts.length, 0);
+  const nameLcs = records.map((record) => record.nameLc);
+  const names = records.map((record) => record.name);
+  const sexCodes = new Uint8Array(records.length);
+  const rowStarts = new Uint32Array(records.length + 1);
+  const yearOffsets = new Uint16Array(rowCount);
+  const counts = new Uint32Array(rowCount);
+  const yearPercentiles = new Float32Array(rowCount);
+  const totalBirths = new Uint32Array(records.length);
+  const recentBirths = new Uint32Array(records.length);
+  const overallPercentiles = new Float32Array(records.length);
+  const recentPercentiles = new Float32Array(records.length);
+  recentPercentiles.fill(-1);
+  const recordByKey = new Map<string, number>();
+  const recordsBySex = { F: [] as number[], M: [] as number[] };
+  const overallBirthCounts = { F: 0, M: 0 };
+  const yearCount = meta.maxBirthYear - meta.minBirthYear + 1;
+
+  let rowIndex = 0;
+  for (let recordIndex = 0; recordIndex < records.length; recordIndex += 1) {
+    const record = records[recordIndex];
+    sexCodes[recordIndex] = sexCode(record.sex);
+    rowStarts[recordIndex] = rowIndex;
+    totalBirths[recordIndex] = record.totalBirths;
+    recentBirths[recordIndex] = record.recentBirths;
+    overallBirthCounts[record.sex] += record.totalBirths;
+    recordsBySex[record.sex].push(recordIndex);
+    recordByKey.set(nameIndexKey(record.nameLc, record.sex), recordIndex);
+    for (let index = 0; index < record.counts.length; index += 1) {
+      yearOffsets[rowIndex] = record.years[index];
+      counts[rowIndex] = record.counts[index];
+      rowIndex += 1;
+    }
+  }
+  rowStarts[records.length] = rowIndex;
+
+  assignOverallPercentiles(recordsBySex.F, totalBirths, overallBirthCounts.F, overallPercentiles);
+  assignOverallPercentiles(recordsBySex.M, totalBirths, overallBirthCounts.M, overallPercentiles);
+  assignRecentPercentiles(recordsBySex.F, recentBirths, recentPercentiles);
+  assignRecentPercentiles(recordsBySex.M, recentBirths, recentPercentiles);
+  assignYearPercentiles(recordsBySex, rowStarts, yearOffsets, counts, yearBirthCounts, yearPercentiles, yearCount);
+
+  return {
+    meta,
+    minBirthYear: meta.minBirthYear,
+    maxBirthYear: meta.maxBirthYear,
+    yearCount,
+    nameLcs,
+    names,
+    sexCodes,
+    rowStarts,
+    yearOffsets,
+    counts,
+    yearPercentiles,
+    totalBirths,
+    recentBirths,
+    overallPercentiles,
+    recentPercentiles,
+    overallBirthCounts,
+    yearBirthCounts,
+    recordByKey,
+    recordsBySex
+  };
+}
+
+function hydrateNameIndex(record: CachedNameIndexRecord, meta: DataMeta): NameIndex {
+  const recordByKey = new Map<string, number>();
+  const recordsBySex = { F: [] as number[], M: [] as number[] };
+  for (let index = 0; index < record.nameLcs.length; index += 1) {
+    const sex = sexFromCode(record.sexCodes[index]);
+    recordByKey.set(nameIndexKey(record.nameLcs[index], sex), index);
+    recordsBySex[sex].push(index);
+  }
+
+  return {
+    meta,
+    minBirthYear: meta.minBirthYear,
+    maxBirthYear: meta.maxBirthYear,
+    yearCount: meta.maxBirthYear - meta.minBirthYear + 1,
+    nameLcs: record.nameLcs,
+    names: record.names,
+    sexCodes: record.sexCodes,
+    rowStarts: record.rowStarts,
+    yearOffsets: record.yearOffsets,
+    counts: record.counts,
+    yearPercentiles: record.yearPercentiles,
+    totalBirths: record.totalBirths,
+    recentBirths: record.recentBirths,
+    overallPercentiles: record.overallPercentiles,
+    recentPercentiles: record.recentPercentiles,
+    overallBirthCounts: { F: record.overallBirthCountF, M: record.overallBirthCountM },
+    yearBirthCounts: { F: record.yearBirthCountsF, M: record.yearBirthCountsM },
+    recordByKey,
+    recordsBySex
+  };
+}
+
+function assignOverallPercentiles(recordIndices: number[], births: Uint32Array, totalBirthCount: number, output: Float32Array) {
+  recordIndices.sort((left, right) => births[left] - births[right]);
+  let cumulative = 0;
+  let index = 0;
+  while (index < recordIndices.length) {
+    const start = index;
+    const birthCount = births[recordIndices[index]];
+    let groupBirths = 0;
+    while (index < recordIndices.length && births[recordIndices[index]] === birthCount) {
+      groupBirths += births[recordIndices[index]];
+      index += 1;
+    }
+    cumulative += groupBirths;
+    const percentile = totalBirthCount === 0 ? 0 : cumulative / totalBirthCount;
+    for (let groupIndex = start; groupIndex < index; groupIndex += 1) {
+      output[recordIndices[groupIndex]] = percentile;
+    }
+  }
+}
+
+function assignRecentPercentiles(recordIndices: number[], births: Uint32Array, output: Float32Array) {
+  const recentIndices = recordIndices.filter((recordIndex) => births[recordIndex] > 0);
+  const totalBirthCount = recentIndices.reduce((sum, recordIndex) => sum + births[recordIndex], 0);
+  assignOverallPercentiles(recentIndices, births, totalBirthCount, output);
+}
+
+function assignYearPercentiles(
+  recordsBySex: { F: number[]; M: number[] },
+  rowStarts: Uint32Array,
+  yearOffsets: Uint16Array,
+  counts: Uint32Array,
+  yearBirthCounts: { F: Uint32Array; M: Uint32Array },
+  output: Float32Array,
+  yearCount: number
+) {
+  const buckets = Array.from({ length: yearCount * 2 }, () => [] as number[]);
+  for (const sex of ["F", "M"] as const) {
+    const sexOffset = sex === "F" ? 0 : yearCount;
+    for (const recordIndex of recordsBySex[sex]) {
+      for (let rowIndex = rowStarts[recordIndex]; rowIndex < rowStarts[recordIndex + 1]; rowIndex += 1) {
+        buckets[sexOffset + yearOffsets[rowIndex]].push(rowIndex);
+      }
+    }
+  }
+
+  for (const sex of ["F", "M"] as const) {
+    const sexOffset = sex === "F" ? 0 : yearCount;
+    for (let yearOffset = 0; yearOffset < yearCount; yearOffset += 1) {
+      const bucket = buckets[sexOffset + yearOffset];
+      const totalBirthCount = yearBirthCounts[sex][yearOffset];
+      bucket.sort((left, right) => counts[left] - counts[right]);
+      let cumulative = 0;
+      let index = 0;
+      while (index < bucket.length) {
+        const start = index;
+        const birthCount = counts[bucket[index]];
+        let groupBirths = 0;
+        while (index < bucket.length && counts[bucket[index]] === birthCount) {
+          groupBirths += counts[bucket[index]];
+          index += 1;
+        }
+        cumulative += groupBirths;
+        const percentile = totalBirthCount === 0 ? 0 : cumulative / totalBirthCount;
+        for (let groupIndex = start; groupIndex < index; groupIndex += 1) {
+          output[bucket[groupIndex]] = percentile;
+        }
+      }
+    }
+  }
+}
+
+function nameIndexKey(normalizedName: string, sex: Sex) {
+  return `${sex}:${normalizedName}`;
+}
+
+function sexCode(sex: Sex) {
+  return sex === "F" ? 0 : 1;
+}
+
+function sexFromCode(code: number): Sex {
+  return code === 0 ? "F" : "M";
+}
+
+function sqlString(value: string) {
+  return `'${value.replaceAll("'", "''")}'`;
+}
+
+function describeError(error: unknown) {
+  if (error instanceof Error) return `${error.name}: ${error.message}`;
+  return String(error);
+}
+
+async function queryDistribution(state: DataState, normalizedName: string, sex: Sex): Promise<QueryDatum[]> {
+  if (state.kind === "index") {
+    return queryIndexedDistribution(state.index, normalizedName, sex);
+  }
+
   const table = await state.statement.query(normalizedName, sex);
   return (table.toArray() as Array<Record<string, unknown>>).map((row) => ({
     birthYear: numberFromCell(row.birth_year),
@@ -1563,16 +2071,89 @@ async function queryDistribution(state: DuckState, normalizedName: string, sex: 
 }
 
 async function queryRangePercentile(
-  state: DuckState,
+  state: DataState,
   normalizedName: string,
   sex: Sex,
   startYear: number,
   endYear: number
 ) {
+  if (state.kind === "index") {
+    return queryIndexedRangePercentile(state.index, normalizedName, sex, startYear, endYear);
+  }
+
   const table = await state.rangeStatement.query(sex, startYear, endYear, normalizedName);
   const rows = table.toArray() as Array<Record<string, unknown>>;
   if (rows.length === 0) return null;
   return nullableNumberFromCell(rows[0].range_percentile);
+}
+
+function queryIndexedDistribution(index: NameIndex, normalizedName: string, sex: Sex): QueryDatum[] {
+  const recordIndex = index.recordByKey.get(nameIndexKey(normalizedName, sex));
+  if (recordIndex === undefined) return [];
+
+  const rows: QueryDatum[] = [];
+  const totalBirths = index.totalBirths[recordIndex];
+  const overallPercentile = index.overallPercentiles[recordIndex];
+  const recentPercentile = index.recentPercentiles[recordIndex] < 0 ? null : index.recentPercentiles[recordIndex];
+  const overallBirthCount = index.overallBirthCounts[sex];
+  const yearBirthCounts = index.yearBirthCounts[sex];
+
+  for (let rowIndex = index.rowStarts[recordIndex]; rowIndex < index.rowStarts[recordIndex + 1]; rowIndex += 1) {
+    const yearOffset = index.yearOffsets[rowIndex];
+    const births = index.counts[rowIndex];
+    rows.push({
+      birthYear: index.minBirthYear + yearOffset,
+      births,
+      probability: totalBirths === 0 ? 0 : births / totalBirths,
+      overallBirthCount,
+      overallPercentile,
+      recentPercentile,
+      yearBirthCount: yearBirthCounts[yearOffset],
+      yearPercentile: index.yearPercentiles[rowIndex]
+    });
+  }
+
+  return rows;
+}
+
+function queryIndexedRangePercentile(
+  index: NameIndex,
+  normalizedName: string,
+  sex: Sex,
+  startYear: number,
+  endYear: number
+) {
+  const selectedRecordIndex = index.recordByKey.get(nameIndexKey(normalizedName, sex));
+  if (selectedRecordIndex === undefined) return null;
+
+  const startOffset = startYear - index.minBirthYear;
+  const endOffset = endYear - index.minBirthYear;
+  const selectedBirths = sumIndexedRangeBirths(index, selectedRecordIndex, startOffset, endOffset);
+  if (selectedBirths === 0) return null;
+
+  let rangeBirthCount = 0;
+  let birthsAsRareOrRarer = 0;
+  for (const recordIndex of index.recordsBySex[sex]) {
+    const rangeBirths = sumIndexedRangeBirths(index, recordIndex, startOffset, endOffset);
+    if (rangeBirths === 0) continue;
+    rangeBirthCount += rangeBirths;
+    if (rangeBirths <= selectedBirths) {
+      birthsAsRareOrRarer += rangeBirths;
+    }
+  }
+
+  return rangeBirthCount === 0 ? null : birthsAsRareOrRarer / rangeBirthCount;
+}
+
+function sumIndexedRangeBirths(index: NameIndex, recordIndex: number, startOffset: number, endOffset: number) {
+  let sum = 0;
+  for (let rowIndex = index.rowStarts[recordIndex]; rowIndex < index.rowStarts[recordIndex + 1]; rowIndex += 1) {
+    const yearOffset = index.yearOffsets[rowIndex];
+    if (yearOffset < startOffset) continue;
+    if (yearOffset > endOffset) break;
+    sum += index.counts[rowIndex];
+  }
+  return sum;
 }
 
 function makeChartData(result: QueryResult) {
