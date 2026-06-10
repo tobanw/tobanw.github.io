@@ -1,13 +1,13 @@
-import { feedResponse, generateAtomFeed, getAllFeedEntries } from "@lib/feed";
+import { feedResponse, generateRssFeed, getAllFeedEntries } from "@lib/feed";
 import { SITE } from "@lib/site";
 
 export async function GET() {
-  const xml = await generateAtomFeed({
+  const xml = await generateRssFeed({
     title: SITE.name,
     description: SITE.description,
-    selfPath: "/atom.xml",
+    selfPath: "/rss.xml",
     sitePath: "/",
     entries: await getAllFeedEntries()
   });
-  return feedResponse(xml, "atom");
+  return feedResponse(xml, "rss");
 }
