@@ -1,0 +1,93 @@
+---
+title: "Use eCDFs instead of histograms"
+date: "2026-06-06 13:10:00"
+description: "Histograms are familiar, but empirical CDFs are usually a better default for visualizing distributions: no bin widths, easy percentiles, and better behavior in the tails."
+math: true
+---
+
+import EcdfHistogramComparison from "@components/viz/EcdfHistogramComparison";
+
+Histograms are usually the first plot people reach for when they want to look at a distribution.
+They are familiar and often good enough.
+But for many distribution questions, they are the wrong default.
+
+My default has long been the empirical CDF, or eCDF.
+Once you get used to reading them, eCDFs are almost always cleaner: no bin widths, percentiles are directly visible, and zooming in does not make you forget about the tails.
+
+An eCDF plots the fraction of observations less than or equal to each value.
+Formally, for a sample $x_1,\ldots,x_n$, it is
+
+$$
+\hat F(t) = \frac{1}{n}\sum_{i=1}^n \mathbf{1}(x_i \le t).
+$$
+
+In plain English: the x-axis is the value, and the y-axis is the cumulative share of the data.
+If the curve is at 0.8 when $x = 12$, then 80% of the observations are at or below 12.
+
+Here is a simple example.
+The sample mostly comes from a central distribution, with a visible right-tailed outlier component.
+Draw a few random samples, change the histogram bin width, and toggle the p5-p95 zoom.
+The histogram keeps asking you to make plotting choices; the eCDF answers distribution questions directly.
+
+<EcdfHistogramComparison client:idle />
+
+## No bins
+
+The first advantage is that eCDFs have no bin width.
+
+With a histogram, the shape can change depending on where the bins start and how wide they are.
+Make the bins too narrow and the plot looks noisy.
+Make them too wide and you smooth away real structure.
+There are rules of thumb for choosing bin widths, but the fact that you need a rule of thumb is already a smell.
+
+An eCDF has no bins.
+Every observation is used directly, and the plot means exactly what it says.
+There is no hidden smoothing parameter quietly changing the visual impression.
+
+## Percentiles are the native units
+
+The second advantage is that percentiles are trivial to read.
+Want the median?
+Look at where the curve crosses 0.5.
+Want the 90th percentile?
+Look at where it crosses 0.9.
+Want to compare two distributions?
+Plot two eCDFs and see which curve reaches a given cumulative share sooner.
+This makes the plot especially nice for questions like "how bad is the worst 10%?" or "what share is under this threshold?"
+
+Histograms are worse for this because they show local mass rather than cumulative probability.
+That is sometimes what you want, but often you end up mentally integrating the bars anyway.
+If the question is about ranks, percentiles, thresholds, or tail probabilities, the eCDF is already in the right units.
+
+## Zooming without losing the tails
+
+The third advantage is that eCDFs behave much better when there are outliers.
+
+With a histogram, a few extreme values can stretch the x-axis so far that the relevant part of the distribution gets crushed into a small region.
+You can zoom in, but then the tails disappear from the plot entirely.
+So you are forced to choose between seeing the main body clearly and remembering that the tails exist.
+
+With an eCDF, zooming into the relevant x-range does not have the same failure mode.
+If you cut off the x-axis at, say, the 99th percentile, the curve simply stops near 0.99.
+The missing 1% is still visible as missing vertical distance.
+You can focus on the region where most of the data lives without pretending that the tail mass is zero.
+
+This is a nice separation of concerns.
+The x-axis can focus on the region you care about, while the y-axis still accounts for the whole sample.
+If the curve ends at 0.96, then 4% of the sample remains above the visible range.
+That is much harder to miss than a zoomed histogram with chopped-off bars.
+
+## When histograms are still useful
+
+Histograms are still useful.
+If the goal is to see local density, a histogram can be useful.
+If the distribution is sharply multimodal, the bars may communicate the modes more directly.
+If the audience expects a histogram, the familiarity may be worth the cost.
+Density plots can also be useful when you explicitly want a smoothed estimate of local mass.
+
+But for routine distribution checks, especially when percentiles or tails matter, eCDFs are a better default.
+Histograms feel obvious because everyone has seen them a thousand times.
+eCDFs take a minute to get used to.
+But once they click, histograms start to feel oddly indirect: they make you pick bins, obscure percentiles, and force awkward choices around outliers.
+
+For most distribution questions, the eCDF is the plot I want.
