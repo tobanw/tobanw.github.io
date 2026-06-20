@@ -786,6 +786,130 @@ h3 {
   border-top-style: dashed;
 }
 
+.gaussian-viz {
+  width: min(100%, 860px);
+}
+
+.gaussian-control {
+  display: grid;
+  gap: 0.35rem;
+  margin: 1rem 0 1.1rem;
+}
+
+.gaussian-control-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.gaussian-control output {
+  padding: 0.18rem 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--paper);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+.gaussian-slider {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.gaussian-presets,
+.gaussian-legend {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.gaussian-presets {
+  justify-content: space-between;
+}
+
+.gaussian-presets button {
+  padding: 0.18rem 0.42rem;
+  border: 1px solid var(--quiet);
+  border-radius: 5px;
+  background: var(--paper);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.gaussian-presets button:hover,
+.gaussian-presets button:focus-visible,
+.gaussian-presets button.is-selected {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.gaussian-bar {
+  fill: rgba(15, 118, 110, 0.28);
+}
+
+.gaussian-clt-line {
+  fill: none;
+  stroke: var(--accent-2);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.6;
+}
+
+.gaussian-center-line {
+  stroke: var(--ink);
+  stroke-dasharray: 6 5;
+  stroke-width: 1.4;
+}
+
+.gaussian-center-label {
+  fill: var(--ink);
+}
+
+.gaussian-legend {
+  flex-wrap: wrap;
+  margin-top: 0.65rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+}
+
+.gaussian-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.gaussian-key {
+  display: inline-block;
+  width: 1.1rem;
+  height: 0;
+  border-top: 3px solid currentColor;
+}
+
+.gaussian-key-bars {
+  color: var(--accent);
+}
+
+.gaussian-key-clt {
+  color: var(--accent-2);
+}
+
+.gaussian-key-center {
+  color: var(--ink);
+  border-top-style: dashed;
+}
+
+.gaussian-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .name-age-intro h1 {
   max-width: none;
 }
@@ -1481,7 +1605,8 @@ h3 {
   margin-top: 2.5rem;
 }
 
-.math-display {
+.math-display,
+.katex-display {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -1729,6 +1854,16 @@ h3 {
   }
 
   .imbalance-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .gaussian-control-head,
+  .gaussian-presets,
+  .gaussian-legend {
+    flex-wrap: wrap;
+  }
+
+  .gaussian-stats {
     grid-template-columns: 1fr;
   }
 
