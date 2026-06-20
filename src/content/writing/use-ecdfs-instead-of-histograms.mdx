@@ -26,7 +26,7 @@ If the curve is at 0.8 when $x = 12$, then 80% of the observations are at or bel
 
 Here is a simple example.
 The sample mostly comes from a central distribution, with a visible right-tailed outlier component.
-Draw a few random samples, change the histogram bin width, and toggle the p5-p95 zoom.
+Draw a few random samples, change the histogram bin width, and toggle the x-axis zoom.
 The histogram keeps asking you to make plotting choices; the eCDF answers distribution questions directly.
 
 <EcdfHistogramComparison client:idle />
@@ -77,17 +77,14 @@ The x-axis can focus on the region you care about, while the y-axis still accoun
 If the curve ends at 0.96, then 4% of the sample remains above the visible range.
 That is much harder to miss than a zoomed histogram with chopped-off bars.
 
-## When histograms are still useful
+## The familiarity trap
 
-Histograms are still useful.
-If the goal is to see local density, a histogram can be useful.
-If the distribution is sharply multimodal, the bars may communicate the modes more directly.
-If the audience expects a histogram, the familiarity may be worth the cost.
-Density plots can also be useful when you explicitly want a smoothed estimate of local mass.
+The real advantage of histograms is familiarity.
+People know how to read them because they have seen them a thousand times.
+That is not nothing, and in narrow cases it may be decisive.
+Otherwise, "histogram" mostly means "the plot everyone is used to", which is not a statistical argument.
 
-But for routine distribution checks, especially when percentiles or tails matter, eCDFs are a better default.
-Histograms feel obvious because everyone has seen them a thousand times.
-eCDFs take a minute to get used to.
-But once they click, histograms start to feel oddly indirect: they make you pick bins, obscure percentiles, and force awkward choices around outliers.
-
-For most distribution questions, the eCDF is the plot I want.
+For routine distribution checks, histograms are usually a bad bargain.
+They make you choose bins, they hide percentiles, and they handle outliers poorly.
+If the question is about thresholds, ranks, quantiles, tail probabilities, or comparing distributions, a histogram is forcing the reader to do extra work.
+The eCDF is already showing the relevant object.

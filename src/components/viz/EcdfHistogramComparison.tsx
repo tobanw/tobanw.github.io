@@ -8,6 +8,7 @@ const PANEL_WIDTH = 430;
 const PANEL_HEIGHT = 230;
 const HIST_PANEL = { left: 58, top: PANEL_TOP, width: PANEL_WIDTH, height: PANEL_HEIGHT };
 const ECDF_PANEL = { left: 568, top: PANEL_TOP, width: PANEL_WIDTH, height: PANEL_HEIGHT };
+const ZOOM_DOMAIN: [number, number] = [-3, 3];
 
 interface HistogramBin {
   start: number;
@@ -41,8 +42,7 @@ export default function EcdfHistogramComparison(): JSX.Element {
 
   const sample = useMemo(() => makeSample(20260606 + sampleIndex * 9973), [sampleIndex]);
   const sorted = useMemo(() => [...sample].sort((a, b) => a - b), [sample]);
-  const zoomDomain = useMemo(() => makeQuantileDomain(sorted, 0.05, 0.95), [sorted]);
-  const domain = zoomed ? zoomDomain : makeFullDomain(sample);
+  const domain = zoomed ? ZOOM_DOMAIN : makeFullDomain(sample);
   const updateBinWidth = (value: number) => setBinWidth(clampBinWidth(value));
   const stepBinWidth = (delta: number) => setBinWidth((value) => clampBinWidth(value + delta));
 
@@ -61,7 +61,7 @@ export default function EcdfHistogramComparison(): JSX.Element {
             shows the missing tail mass as vertical distance from 100%.
           </p>
         </div>
-        <code>{zoomed ? "zoomed to p5-p95" : "full sample range"}</code>
+        <code>{zoomed ? "x-axis zoomed" : "full sample range"}</code>
       </div>
 
       <div className="ecdf-controls" aria-label="Visualization controls">
@@ -74,7 +74,7 @@ export default function EcdfHistogramComparison(): JSX.Element {
           aria-pressed={zoomed}
           onClick={() => setZoomed((value) => !value)}
         >
-          {zoomed ? "show full range" : "zoom to p5-p95"}
+          {zoomed ? "show full range" : "zoom x-axis"}
         </button>
         <div className="ecdf-slider-control">
           <div>
@@ -337,10 +337,6 @@ function makeFullDomain(sample: number[]): [number, number] {
   const paddedMin = Math.floor(min - 0.5);
   const paddedMax = Math.ceil(max + 0.5);
   return [paddedMin, paddedMax];
-}
-
-function makeQuantileDomain(sorted: number[], lower: number, upper: number): [number, number] {
-  return [quantile(sorted, lower), quantile(sorted, upper)];
 }
 
 function makeEcdfPath(sorted: number[], domain: [number, number], panel: PlotPanel): string {
