@@ -38,4 +38,4 @@ Refreshes the bundled SSA baby names snapshot used by `/projects/name-analytics/
 
 ## Deployment
 
-Pushes to `main` run `.github/workflows/deploy.yml`, build the static Astro output, and publish it with GitHub Pages. The custom domain is preserved by `public/CNAME`.
+Pushes to `master` run `.github/workflows/deploy.yml`, build the static Astro output, and publish it with GitHub Pages. The custom domain is preserved by `public/CNAME`.
