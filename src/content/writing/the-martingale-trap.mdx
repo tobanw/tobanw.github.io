@@ -1,0 +1,89 @@
+---
+title: "The martingale trap"
+date: "2026-06-06 12:00:00"
+description: "The efficient market hypothesis is most useful as a warning: many apparent trading edges are just compensation for rare bad states that are easy to leave out of the calculation."
+math: true
+---
+
+The efficient market hypothesis is often stated too strongly by its defenders and too weakly by its critics.
+It does not say that market prices are always correct, or that investors are always rational, or that bubbles are impossible.
+The useful version is more modest:
+**given the information available to you, it is very hard to predict future price changes in a way that earns excess returns.**
+
+In its cleanest form, this is the martingale property.
+Let $P_t$ be the price of an asset at time $t$, and let $\mathcal{F}_t$ represent the information available at that time.
+Then a martingale satisfies:
+
+$$
+E[P_{t+1} \mid \mathcal{F}_t] = P_t.
+$$
+
+That is, conditional on what is currently known, tomorrow's expected price is today's price.
+In practice, you would want to talk about discounted returns, dividends, risk premia, transaction costs, and other complications.
+But the intuition is simple: if public information implied that an asset should obviously rise tomorrow, traders would buy it today, pushing up the price until the obvious profit disappeared.
+
+This is a frustrating idea because markets constantly look inefficient.
+Some asset looks too cheap.
+Some spread looks too wide.
+Some strategy produces small steady gains month after month.
+The natural inference is that the market has made a mistake.
+Often the better inference is that the trader has left out a state of the world.
+
+The key distinction is between the usual outcome and the expected outcome.
+People tend to reason from the usual outcome.
+Markets, at least in competitive settings, are pulled toward the expectation.
+And expectations are sensitive to rare events.
+
+Suppose an asset pays $+1$ with probability 0.99 and $-100$ with probability 0.01.
+Most of the time, holding this asset feels good.
+If you looked at a short history, you would probably see a string of small gains.
+The asset would appear to have a positive edge.
+But its expected payoff is:
+
+$$
+0.99(1) + 0.01(-100) = -0.01.
+$$
+
+The rare bad state dominates the calculation.
+If you ignore that state, the asset looks cheap.
+If you include it, the cheapness disappears.
+
+This is the structure behind "picking up pennies in front of a steamroller."
+The pennies are visible.
+The steamroller is a low-probability event, so it may not show up in the recent data.
+But the price can still reflect it.
+Indeed, this is exactly what an efficient market should do: price the bad state before it arrives.
+
+This is a common source of false confidence among traders.
+They find a trade that has worked for a while, infer that the market is inefficient, and then lever it up.
+But the high Sharpe ratio may be a mirage created by censoring the bad part of the distribution.
+A strategy can look calm not because it is safe, but because the risk is discontinuous.
+
+The same point applies to assets that look cheap on simple valuation metrics.
+A high yield, a low multiple, or a persistent spread is not automatically an inefficiency.
+It may be a payment for bearing a risk that is hard to model, hard to hedge, or simply unpleasant to own.
+The missing term in the spreadsheet is often not a small adjustment.
+It is the state in which the asset is impaired, the financing disappears, or everyone tries to exit at once.
+
+This does not prove that markets are perfectly efficient.
+There are limits to arbitrage, institutional constraints, agency problems, taxes, mandates, and plain human error.
+But it does suggest a useful prior:
+when a trade looks obviously profitable, first assume that you have misunderstood the payoff distribution.
+
+This is especially important because tail risks are easy to underweight.
+The sample sizes are small, the historical record is incomplete, and the incentives are bad.
+If a strategy earns small steady profits while occasionally blowing up, the person running it can look brilliant for years.
+The market may look inefficient during the entire period in which the trader is being paid to hold the crash risk.
+Then the crash arrives and the earlier profits are reinterpreted as compensation rather than alpha.
+
+The martingale property is not a magic theorem that prevents people from making money.
+It is a discipline for thinking clearly.
+If you believe you have found an edge, ask what information you have that is not already in the price.
+Then ask what rare event would make the trade lose a lot of money.
+If the answer is "nothing," you probably have not thought hard enough.
+
+The practical lesson is not to give up on investing or trading.
+It is to be much less impressed by apparent inefficiencies.
+Prices are not omniscient, but they are usually aggregating more information than you are.
+And in many cases, the information you are missing is not subtle.
+It is just sitting in the tail.
