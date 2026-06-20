@@ -3,7 +3,7 @@ import { useId, useMemo, useState, type JSX } from "react";
 const SAMPLE_COUNT = 8_000;
 const BIN_COUNT = 44;
 const MIN_DIMENSIONS = 1;
-const MAX_DIMENSIONS = 200;
+const MAX_DIMENSIONS = 1_000;
 const WIDTH = 720;
 const HEIGHT = 390;
 const PAD = { top: 42, right: 28, bottom: 54, left: 56 };
@@ -67,7 +67,7 @@ export default function GaussianSoapBubbleSimulation(): JSX.Element {
           onChange={(event) => setDimensions(event.currentTarget.valueAsNumber)}
         />
         <div className="gaussian-presets" aria-label="Dimension presets">
-          {[2, 10, 50, 200].map((dimension) => (
+          {[2, 10, 50, 200, 1_000].map((dimension) => (
             <button
               className={dimensions === dimension ? "is-selected" : ""}
               key={dimension}

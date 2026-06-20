@@ -1,50 +1,11 @@
 ---
-title: "The Gaussian soap bubble"
+title: "New essay: The Gaussian soap bubble"
 date: "2026-06-06 09:00:00"
 permalink: "/blog/2026/06/gaussian-soap-bubble/"
-description: "A short note on why high-dimensional Gaussian mass lives in a thin shell, with a CLT proof and an interactive radius simulation."
+description: "Why high-dimensional Gaussian mass lives in a thin shell around the mean."
 tags: ["probability", "geometry"]
-math: true
 ---
 
-import GaussianSoapBubbleSimulation from "@components/viz/GaussianSoapBubbleSimulation";
+I published a short essay on one of my favorite stats fun facts: high-dimensional Gaussian distributions put almost all of their probability mass in a thin shell centered on the mean, even though the density is highest at the mean itself.
 
-My favorite stats fun fact is that high-dimensional Gaussian distributions have almost all of their probability mass concentrated in a thin shell centered on the mean, like a soap bubble, even though the density function is still a bell-curve with its mode at the center of the bubble.
-
-To see it, draw a point from a standard Gaussian in $d$ dimensions:
-
-$$
-X = (X_1,\ldots,X_d), \qquad X_i \sim N(0,1) \text{ independently.}
-$$
-
-The point is not usually close to the origin. Its typical distance is about $\sqrt d$. The surprising part is about the density of the distance from the mean: the pointwise Gaussian density is highest at the origin and decreases as you move outward, but the radial density of $R=\lVert X\rVert$ is not decreasing near zero. In high dimensions it rises until about $\sqrt d$, because thin shells farther from the origin contain much more volume. Most of the mass sits in a relatively thin shell, like a soap bubble around the origin.
-
-The proof is a trivial application of the central limit theorem. Let
-
-$$
-R = \lVert X \rVert, \qquad \text{so} \qquad R^2 = \sum_{i=1}^d X_i^2.
-$$
-
-This is a sum of $d$ iid terms, so the central limit theorem says $R^2$ is approximately normal, centered around $d$, with fluctuations of order $\sqrt d$. Equivalently, $R^2/d$ has relative fluctuations of order $1/\sqrt d$. In short,
-
-$$
-R^2 = d + O_p(\sqrt d),
-$$
-
-and therefore
-
-$$
-R = \sqrt d + O_p(1).
-$$
-
-That is the soap bubble phenomenon: $R$ concentrates near $\sqrt d$. There are two different senses of "thin" here. In raw Euclidean distance, a fixed-probability band around $R$ has constant-order width, since $R=\sqrt d+O_p(1)$. But after normalizing by the typical radius, $R/\sqrt d$ concentrates near $1$, with fluctuations of order $1/\sqrt d$. So the shell gets arbitrarily thin relative to its radius, which is the usual concentration-of-measure sense.
-
-The simulation below draws Gaussian points and plots the distribution of $R=\lVert X\rVert$. Move the dimension slider and watch the distribution march outward while its relative width shrinks.
-
-<GaussianSoapBubbleSimulation client:idle />
-
-This is one of the reasons high-dimensional probability can feel geometrically strange. In one or two dimensions, "near the origin" feels like a plausible place for Gaussian mass to be. In many dimensions, the origin is still the point of highest density, but there is almost no volume there.
-
-The tension is between pointwise density and available volume. At radius $r$, the Gaussian density contributes a factor proportional to $\exp(-r^2/2)$, which pulls mass inward. But the amount of space in a thin spherical shell at radius $r$ grows like $r^{d-1}$, which pushes mass outward. The radial distribution is roughly the product $r^{d-1}\exp(-r^2/2)$. Near the origin, the volume factor pulls this product down to zero; moving outward increases the available volume fast enough that the radial density rises. Past about $\sqrt d$, the exponential density decay dominates and the radial density falls. The shell appears where those two forces balance, right around radius $\sqrt d$. This is a concrete example of concentration of measure: in high dimensions, probability mass often piles up in a narrow region even when the underlying density looks smooth and bell-shaped.
-
-This is not only a really neat fact, it is also relevant in practice. In high-dimensional statistics and machine learning, the most likely point is often not a representative point. What matters is the typical set: the region where individual density may be lower, but where almost all the probability mass actually lives. That shows up in distance-based methods, anomaly detection, and Bayesian computation, where algorithms that chase the mode can miss the shell where ordinary samples are found.
+Read it here: [The Gaussian soap bubble](/writing/gaussian-soap-bubble/).
