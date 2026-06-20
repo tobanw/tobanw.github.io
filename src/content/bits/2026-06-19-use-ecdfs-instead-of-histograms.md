@@ -2,7 +2,7 @@
 title: "New essay: Use eCDFs instead of histograms"
 date: "2026-06-19 23:32:00"
 permalink: "/blog/2026/06/use-ecdfs-instead-of-histograms/"
-description: "A short announcement for the essay Use eCDFs instead of histograms."
+description: "Histograms make you fiddle with bin widths, hide percentiles, and handle tails badly. eCDFs avoid all three problems."
 tags: ["data", "writing"]
 ---
 
