@@ -20,7 +20,16 @@ const { entry } = Astro.props;
       <a class="back-link" href="/bits/">bits</a>
       <h1>{entry.data.title}</h1>
       <p class="post-date">
-        <time datetime={datetime(entry.data.date)}>{formatDate(entry.data.date)}</time>
+        <span>
+          Published <time datetime={datetime(entry.data.date)}>{formatDate(entry.data.date)}</time>
+        </span>
+        {
+          entry.data.updated && (
+            <span>
+              Updated <time datetime={datetime(entry.data.updated)}>{formatDate(entry.data.updated)}</time>
+            </span>
+          )
+        }
         <span class="legacy-label">bit</span>
       </p>
       {
