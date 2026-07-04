@@ -2,7 +2,7 @@
 title: "New mini-app for name analytics: What's in a Name?"
 date: "2026-05-22 09:00:00"
 permalink: "/blog/2026/05/name-analytics/"
-description: "A short announcement for the data/stats mini-app What's in a Name?, which shows whether a name is old, new, making a comeback, going out of style, and how popular it is."
+description: "I made a fun data app that guesses whether a name feels old, new, rising, or fading."
 tags: ["data", "projects"]
 ---
 

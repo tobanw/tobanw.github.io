@@ -11,13 +11,19 @@ interface Props {
   description?: string;
   canonical?: string;
   bodyClass?: string;
+  feedAlternates?: Array<{
+    href: string;
+    title: string;
+    type?: string;
+  }>;
 }
 
 const {
   title = SITE.title,
   description = SITE.description,
   canonical,
-  bodyClass
+  bodyClass,
+  feedAlternates = []
 } = Astro.props;
 
 const pageTitle = title === SITE.title ? SITE.title : `${title} / ${SITE.title}`;
@@ -49,7 +55,18 @@ const canonicalUrl = new URL(canonical ?? Astro.url.pathname, SITE.url).toString
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=3" />
     <link rel="shortcut icon" href="/favicon.ico?v=3" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
-    <link rel="alternate" type="application/atom+xml" title={SITE.name} href="/atom.xml" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml" />
+    <link rel="alternate" type="application/atom+xml" title={`${SITE.name} Atom`} href="/atom.xml" />
+    {
+      feedAlternates.map((feed) => (
+        <link
+          rel="alternate"
+          type={feed.type ?? "application/rss+xml"}
+          title={feed.title}
+          href={feed.href}
+        />
+      ))
+    }
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
