@@ -113,9 +113,9 @@ const derivationHtml = katex.renderToString(derivation, {
     </p>
     <p>
       Tech note: the app runs entirely client-side. It downloads a compressed
-      SSA CSV, loads it into DuckDB-Wasm in a web worker, and runs the estimates
-      in your browser, so there is no server-side database or API behind the
-      tool.
+      SSA CSV on the first load, builds a local name index, and stores that
+      index in your browser for faster reloads. There is no server-side database
+      or API behind the tool.
     </p>
     <p>
       <small>

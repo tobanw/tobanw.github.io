@@ -6,13 +6,25 @@ import { getVisibleWriting, writingToListItem } from "@lib/content";
 const entries = (await getVisibleWriting()).map(writingToListItem);
 ---
 
-<BaseLayout title="Writing" description="Essays by Toban Wiebe on economics, math, programming, and tools.">
+<BaseLayout
+  title="Writing"
+  description="Essays by Toban Wiebe on economics, math, programming, and tools."
+  feedAlternates={[
+    { href: "/writing/rss.xml", title: "Toban Wiebe Writing RSS" },
+    {
+      href: "/writing/atom.xml",
+      title: "Toban Wiebe Writing Atom",
+      type: "application/atom+xml"
+    }
+  ]}
+>
   <section class="page-intro">
     <p class="eyebrow">/writing</p>
     <h1>Writing</h1>
     <p>
       Essays on economics, math, programming, and tools. Shorter notes
-      now live in <a href="/bits/">bits</a>.
+      now live in <a href="/bits/">bits</a>. Subscribe to the
+      <a href="/writing/rss.xml">writing rss</a>.
     </p>
   </section>
 
