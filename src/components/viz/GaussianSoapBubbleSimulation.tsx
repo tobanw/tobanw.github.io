@@ -152,7 +152,7 @@ export default function GaussianSoapBubbleSimulation(): JSX.Element {
 
       <div className="gaussian-legend" aria-hidden="true">
         <span><i className="gaussian-key gaussian-key-bars" /> simulated radius</span>
-        <span><i className="gaussian-key gaussian-key-clt" /> CLT approximation</span>
+        <span><i className="gaussian-key gaussian-key-clt" /> large-d normal approximation</span>
         <span><i className="gaussian-key gaussian-key-center" /> sqrt(d)</span>
       </div>
 
