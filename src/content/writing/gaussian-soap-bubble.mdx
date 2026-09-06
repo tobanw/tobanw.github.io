@@ -1,0 +1,51 @@
+---
+title: "The Gaussian soap bubble"
+date: "2026-09-06 09:00:00"
+description: "Why a high-dimensional standard Gaussian puts most of its mass in a thin shell around the mean, with a CLT proof and an interactive radius simulation."
+tags: ["probability", "geometry"]
+math: true
+---
+
+import GaussianSoapBubbleSimulation from "@components/viz/GaussianSoapBubbleSimulation";
+
+My favorite stats fun fact is that high-dimensional isotropic Gaussian distributions have almost all of their probability mass concentrated in a thin spherical shell centered on the mean, like a soap bubble, even though their density is bell-shaped and maximized at the center of that shell.
+
+To see it, draw a point from a standard Gaussian in $d$ dimensions:
+
+$$
+X = (X_1,\ldots,X_d), \qquad X_i \sim N(0,1) \text{ independently.}
+$$
+
+This is the standard multivariate Gaussian, usually written $X \sim N(0,I_d)$: independent standard-normal coordinates give a jointly normal vector with mean zero and identity covariance.
+
+The point is not usually close to the origin: its typical distance is about $\sqrt d$. Although the pointwise Gaussian density is highest at the origin and decreases outward, the radial density of $R=\lVert X\rVert$ behaves differently. For $d>1$ it initially rises, because thin shells farther from the origin contain more volume. In high dimensions it peaks near $\sqrt d$, and most of the mass lies in a shell that is thin relative to that radius.
+
+The proof is a trivial application of the central limit theorem. Let
+
+$$
+R = \lVert X \rVert, \qquad \text{so} \qquad R^2 = \sum_{i=1}^d X_i^2.
+$$
+
+The $X_i^2$ are iid, so the central limit theorem says $R^2$ is approximately normal, centered around $d$, with fluctuations of order $\sqrt d$. Equivalently, $R^2/d$ fluctuates around $1$ on the scale $1/\sqrt d$. In short,
+
+$$
+R^2 = d + O_p(\sqrt d),
+$$
+
+and therefore
+
+$$
+R = \sqrt d + O_p(1).
+$$
+
+Thus $R$ has constant-order fluctuations around $\sqrt d$. A central band containing, say, 90% of the radii has constant-order absolute width. But $R/\sqrt d=1+O_p(1/\sqrt d)$, so that band becomes arbitrarily thin relative to its radius. This relative thinning is the soap bubble phenomenon.
+
+The simulation below draws Gaussian points and plots the distribution of $R=\lVert X\rVert$. Move the dimension slider and watch the distribution march outward while its relative width shrinks.
+
+<GaussianSoapBubbleSimulation client:idle />
+
+This is one of the reasons high-dimensional probability can feel geometrically strange. In one or two dimensions, "near the origin" feels like a plausible place for Gaussian mass to be. In many dimensions, the origin is still the point of highest density, but any small neighborhood around it contains almost no probability mass.
+
+The tension is between pointwise density and available volume. At radius $r$, the Gaussian density supplies a factor proportional to $\exp(-r^2/2)$, while the surface area of a thin spherical shell supplies a factor proportional to $r^{d-1}$. The radial density is therefore exactly proportional to $r^{d-1}\exp(-r^2/2)$. For $d>1$ it starts at zero, rises, and peaks at $\sqrt{d-1}$, where volume growth and density decay balance exactly; after that, density decay dominates and the radial density falls. Since $\sqrt{d-1}\sim\sqrt d$, the balance occurs at the same radius predicted by the CLT. This is a concrete example of concentration of measure: in high dimensions, probability mass can be confined to a region that is narrow relative to its scale even when the underlying density looks smooth and bell-shaped.
+
+This is not only a really neat fact, it is also relevant in practice. Pairwise distances between independent Gaussian points concentrate around $\sqrt{2d}$, so distance-based methods see less relative contrast as dimension grows. Likelihood-based anomaly detectors can mistake a high-density but atypical point, such as the mean, for an ordinary observation. And in Bayesian computation, mode-based summaries can miss the typical set where most posterior mass and representative draws are found.
